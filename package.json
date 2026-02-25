@@ -1,0 +1,65 @@
+{
+  "name": "robot-toast",
+  "version": "1.0.0-beta.1",
+  "description": "A lightweight, framework-agnostic toast notification library with an animated robot character. Draggable, typed messages, customizable positions, and SVG robot variants.",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  },
+  "sideEffects": [
+    "*.css",
+    "dist/**/*.js",
+    "dist/**/*.mjs",
+    "./src/styles-injector.ts",
+    "./dist/styles-injector.js"
+  ],
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "toast",
+    "notification",
+    "robot",
+    "animated",
+    "draggable",
+    "typescript",
+    "lightweight",
+    "framework-agnostic"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^25.3.0",
+    "rimraf": "^6.1.3",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "https://robot-toast.vercel.app/"
+}
