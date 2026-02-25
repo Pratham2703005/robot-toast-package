@@ -15,10 +15,7 @@
   },
   "sideEffects": [
     "*.css",
-    "dist/**/*.js",
-    "dist/**/*.mjs",
-    "./src/styles-injector.ts",
-    "./dist/styles-injector.js"
+    "./src/styles-injector.ts"
   ],
   "files": [
     "dist"
@@ -56,10 +53,10 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/Pratham2703005/robot-toast-package"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/Pratham2703005/robot-toast-package/issues"
   },
   "homepage": "https://robot-toast.vercel.app/"
 }
