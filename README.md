@@ -264,11 +264,9 @@ toast({ message: 'Slide!',  transition: 'slide' });
 ```tsx
 'use client';
 import { toast } from 'robot-toast';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 export default function App() {
-  const shown = useRef(false);
-
   useEffect(() => {
     toast({
       message: 'Welcome!',
