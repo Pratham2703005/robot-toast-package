@@ -131,6 +131,11 @@ class ToastItem {
     this.messageText = this.messageBox.querySelector('.robot-toast-text')!;
     this.progressBar = this.messageBox.querySelector('.robot-toast-progress-bar');
 
+    // Empty message → hide message box entirely (only the robot shows)
+    if (resolved.message === '') {
+      this.messageBox.classList.add('robot-toast-empty');
+    }
+
     this.assembleLayout();
     document.body.appendChild(this.wrapper);
 
@@ -301,8 +306,15 @@ class ToastItem {
     this.wrapper.classList.add('robot-toast-visible');
 
     const robotHidden = this.options.robotVariant === 'none';
+    const messageHidden = this.options.message === '';
 
     const showMessage = () => {
+      if (messageHidden) {
+        // No text box – skip pop-in, still fire onOpen and start timer
+        this.options.onOpen?.();
+        this.afterTypingComplete();
+        return;
+      }
       // Message pops in
       const msgEnterClass = this.options.transition === 'bounce'
         ? 'message-enter'
@@ -344,9 +356,7 @@ class ToastItem {
 
   private playExit(done: () => void): void {
     const robotHidden = this.options.robotVariant === 'none';
-
-    // Step 1 – message collapses
-    this.messageBox.classList.add('message-exit');
+    const messageHidden = this.options.message === '';
 
     const afterMsg = () => {
       this.messageBox.removeEventListener('animationend', afterMsg);
@@ -372,7 +382,14 @@ class ToastItem {
         this.robotEl.addEventListener('animationend', afterRobot, { once: true });
       }
     };
-    this.messageBox.addEventListener('animationend', afterMsg, { once: true });
+
+    if (messageHidden) {
+      // No text box – skip the collapse step entirely
+      afterMsg();
+    } else {
+      this.messageBox.classList.add('message-exit');
+      this.messageBox.addEventListener('animationend', afterMsg, { once: true });
+    }
   }
 
   // ── Typing effect ──────────────────────────────────────────────────────────

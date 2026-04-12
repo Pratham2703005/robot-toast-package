@@ -147,9 +147,10 @@ class InjectStyles {
 
 .robot-toast-message {
   position: relative;
-  min-width: 280px;
-  max-width: 400px;
-  padding: 14px 12px 0 12px;
+  width: fit-content;
+  min-width: 120px;
+  max-width: min(400px, calc(100vw - 120px));
+  padding: 14px 40px 0 14px;
   border-radius: 8px;
   margin: 0;
   opacity: 0;
@@ -158,6 +159,11 @@ class InjectStyles {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   user-select: none;
   cursor: default;
+  box-sizing: border-box;
+}
+
+.robot-toast-message.robot-toast-empty {
+  display: none;
 }
 
 .robot-toast-message.robot-toast-theme-light {
@@ -294,13 +300,14 @@ class InjectStyles {
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 .robot-toast-text {
-  padding-right: 24px;
   padding-bottom: 12px;
   font-size: 14px;
   line-height: 1.5;
   word-break: break-word;
   white-space: pre-wrap;
   font-weight: 500;
+  min-width: 0;
+  min-height: 1.5em;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -551,6 +558,71 @@ class InjectStyles {
 @keyframes message-enter-flip {
   from { opacity: 0; transform: perspective(400px) rotateX(-20deg); }
   to   { opacity: 1; transform: perspective(400px) rotateX(0deg); }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* RESPONSIVE - Mobile / small-screen tweaks                                */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+@media (max-width: 600px) {
+  .robot-toast-wrapper {
+    gap: 8px;
+    max-width: calc(100vw - 24px);
+  }
+
+  .robot-toast-wrapper.robot-toast-top-right,
+  .robot-toast-wrapper.robot-toast-bottom-right {
+    right: 12px;
+  }
+  .robot-toast-wrapper.robot-toast-top-left,
+  .robot-toast-wrapper.robot-toast-bottom-left {
+    left: 12px;
+  }
+  .robot-toast-wrapper.robot-toast-top-right,
+  .robot-toast-wrapper.robot-toast-top-left,
+  .robot-toast-wrapper.robot-toast-top-center { top: 12px; }
+  .robot-toast-wrapper.robot-toast-bottom-right,
+  .robot-toast-wrapper.robot-toast-bottom-left,
+  .robot-toast-wrapper.robot-toast-bottom-center { bottom: 12px; }
+
+  .robot-toast-wrapper.robot-toast-top-center,
+  .robot-toast-wrapper.robot-toast-bottom-center {
+    width: calc(100vw - 24px);
+    justify-content: center;
+  }
+
+  .robot-toast-robot {
+    width: 48px;
+    height: 52px;
+  }
+
+  .robot-toast-message {
+    min-width: 100px;
+    max-width: calc(100vw - 48px - 24px - 8px);
+    font-size: 13px;
+    padding: 12px 36px 0 12px;
+  }
+
+  .robot-toast-text {
+    font-size: 13px;
+    padding-bottom: 10px;
+  }
+
+  .robot-toast-close {
+    width: 24px;
+    height: 24px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 360px) {
+  .robot-toast-robot {
+    width: 40px;
+    height: 44px;
+  }
+  .robot-toast-message {
+    max-width: calc(100vw - 40px - 20px - 8px);
+  }
 }
     `;
 
