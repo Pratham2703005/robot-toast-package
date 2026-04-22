@@ -154,7 +154,13 @@ class InjectStyles {
   width: fit-content;
   min-width: 120px;
   max-width: min(400px, calc(100vw - 120px));
-  padding: 10px 40px 0 14px;
+  /*
+   * IMPORTANT: no padding on the outer box. Each section (.robot-toast-body,
+   * .robot-toast-footer, .robot-toast-progress-container) owns its own
+   * spacing, so optional sections can disappear without us having to tweak
+   * margins / paddings anywhere else.
+   */
+  padding: 0;
   border-radius: 8px;
   margin: 0;
   opacity: 0;
@@ -300,11 +306,15 @@ class InjectStyles {
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-/* MESSAGE TEXT */
+/* BODY — the message zone. Always present, always owns its own padding.     */
+/* Right padding leaves clear room for the absolute close button.            */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
+.robot-toast-body {
+  padding: 10px 40px 10px 14px;
+}
+
 .robot-toast-text {
-  padding-bottom: 12px;
   font-size: 14px;
   line-height: 1.5;
   word-break: break-word;
@@ -312,23 +322,52 @@ class InjectStyles {
   font-weight: 500;
   min-width: 0;
   min-height: 1.5em;
+  /* No padding-bottom here — body's padding-bottom handles spacing toward
+     whichever section follows (footer, progress bar, or nothing). */
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-/* INLINE BUTTONS — render via buttons: [{label, onClick, className?}, ...]   */
-/* Buttons render in array order. Default style is neutral; consumers layer   */
-/* their own visual hierarchy by passing a className.                         */
+/* FOOTER — the button zone. Rendered only when buttons.length > 0.         */
+/* Owns its own bottom padding so there are no conditional margins anywhere. */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-.robot-toast-actions {
+.robot-toast-footer {
+  /*
+   * Symmetric vertical padding (10px top + 10px bottom) — matches body so
+   * the two sections feel like equally-weighted "cards" stacked inside the
+   * toast. This is intentional even though it doubles the gap between text
+   * and buttons (10 body-bottom + 10 footer-top = 20px); the visual balance
+   * matters more than the gap-tightness.
+   */
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* A row inside the footer. data-count drives width distribution — pure CSS,
+ * no JS-side layout code. */
+.robot-toast-row {
   display: flex;
   gap: 6px;
-  justify-content: flex-end;
   align-items: center;
-  margin-top: 4px;
-  padding-bottom: 8px;
-  flex-wrap: wrap;
 }
+
+/* 1 button in its row → content-sized, left-aligned (flex default) */
+.robot-toast-row[data-count="1"] .robot-toast-btn {
+  /* nothing — intrinsic width, flex-start alignment */
+}
+
+/* 2 or 3 buttons in a row → equal shares, filling the row's width */
+.robot-toast-row[data-count="2"] .robot-toast-btn,
+.robot-toast-row[data-count="3"] .robot-toast-btn {
+  flex: 1;
+  min-width: 0;   /* let long labels shrink without breaking the 50/50 split */
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* INLINE BUTTONS                                                            */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 .robot-toast-btn {
   appearance: none;
@@ -336,7 +375,7 @@ class InjectStyles {
   font-size: 12px;
   font-weight: 500;
   line-height: 1;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 5px;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease, transform 0.05s ease;
@@ -349,18 +388,22 @@ class InjectStyles {
 .robot-toast-btn:active { transform: scale(0.97); }
 
 /*
- * When there's only one button, it's implicitly the primary CTA — style it
- * filled so it feels decisive (matches the Undo / Retry UX). As soon as a
- * second button appears, both drop back to the neutral outline look and the
- * caller distinguishes them with a custom className on the primary.
+ * Solo CTA: when the toast has exactly one button, it's implicitly the
+ * primary action. Render it filled/dark so it feels decisive (Undo / Retry
+ * UX). A multi-button toast drops back to all-neutral — the caller picks a
+ * primary via its own className.
+ *
+ * "Exactly one button total" = the single row has data-count="1" AND is the
+ * only row in the footer (covers the n=1 case; n=4 also has data-count rows
+ * but they're paired, not only-child).
  */
-.robot-toast-actions .robot-toast-btn:only-child {
+.robot-toast-row[data-count="1"]:only-child .robot-toast-btn {
   background: #18181b;
   color: #fafafa;
   border-color: #18181b;
   font-weight: 600;
 }
-.robot-toast-actions .robot-toast-btn:only-child:hover {
+.robot-toast-row[data-count="1"]:only-child .robot-toast-btn:hover {
   background: #000;
   border-color: #000;
   color: #fafafa;
@@ -375,12 +418,12 @@ class InjectStyles {
   background: #27272a;
   color: #fafafa;
 }
-.robot-toast-message.robot-toast-theme-dark .robot-toast-actions .robot-toast-btn:only-child {
+.robot-toast-message.robot-toast-theme-dark .robot-toast-row[data-count="1"]:only-child .robot-toast-btn {
   background: #fafafa;
   color: #18181b;
   border-color: #fafafa;
 }
-.robot-toast-message.robot-toast-theme-dark .robot-toast-actions .robot-toast-btn:only-child:hover {
+.robot-toast-message.robot-toast-theme-dark .robot-toast-row[data-count="1"]:only-child .robot-toast-btn:hover {
   background: #e4e4e7;
   border-color: #e4e4e7;
   color: #18181b;
@@ -395,12 +438,12 @@ class InjectStyles {
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
 }
-.robot-toast-message.robot-toast-theme-colored .robot-toast-actions .robot-toast-btn:only-child {
+.robot-toast-message.robot-toast-theme-colored .robot-toast-row[data-count="1"]:only-child .robot-toast-btn {
   background: rgba(255, 255, 255, 0.95);
   color: #18181b;
   border-color: transparent;
 }
-.robot-toast-message.robot-toast-theme-colored .robot-toast-actions .robot-toast-btn:only-child:hover {
+.robot-toast-message.robot-toast-theme-colored .robot-toast-row[data-count="1"]:only-child .robot-toast-btn:hover {
   background: #fff;
   color: #18181b;
 }
@@ -698,12 +741,20 @@ class InjectStyles {
     min-width: 100px;
     max-width: calc(100vw - 48px - 24px - 8px);
     font-size: 13px;
-    padding: 10px 36px 0 12px;
+    /* padding stays 0 on the outer box; sections own their spacing */
+  }
+
+  .robot-toast-body {
+    padding: 10px 36px 10px 12px;
+  }
+
+  .robot-toast-footer {
+    /* Same symmetric vertical padding as body — equal section weight on mobile too */
+    padding: 10px;
   }
 
   .robot-toast-text {
     font-size: 13px;
-    padding-bottom: 10px;
   }
 
   .robot-toast-close {

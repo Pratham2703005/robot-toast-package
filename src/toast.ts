@@ -24,6 +24,37 @@ function nextId(): number { return _nextId++; }
 // ─── Vertical offset step between stacked toasts (px) ────────────────────────
 const STACK_GAP = 16;
 
+/**
+ * Split N buttons into rows according to the layout spec:
+ *   1→[1]   2→[2]   3→[3]   4→[2,2]
+ *   5→[3,2] 6→[3,3] 7→[3,2,2] 8→[3,3,2] 9→[3,3,3]
+ *   10→[3,3,2,2]  11→[3,3,3,2]  12→[3,3,3,3]  …
+ * Rule: fill rows of 3 from the top. If the tail would leave a single
+ * lonely button, steal one from the previous row so the last two rows
+ * balance as [2, 2].
+ */
+function chunkButtons<T>(buttons: T[]): T[][] {
+  const n = buttons.length;
+  if (n === 0) return [];
+  if (n <= 3)  return [buttons.slice()];
+  if (n === 4) return [buttons.slice(0, 2), buttons.slice(2)];
+
+  const rows: T[][] = [];
+  let i = 0;
+  while (n - i > 4) {
+    rows.push(buttons.slice(i, i + 3));
+    i += 3;
+  }
+  const rem = n - i;
+  if (rem === 4) {
+    rows.push(buttons.slice(i, i + 2));
+    rows.push(buttons.slice(i + 2));
+  } else {
+    rows.push(buttons.slice(i));
+  }
+  return rows;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    ToastItem  –  one live toast on screen
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -266,7 +297,13 @@ class ToastItem {
       });
     }
 
-    // Close button
+    // ── Layout ────────────────────────────────────────────────────────────
+    // Discrete sections, each owning its own spacing. The outer `box` has no
+    // padding — bodyPad and footerPad live on the sections themselves, so
+    // optional pieces (footer, progress bar) can appear/disappear without
+    // us having to juggle conditional margins anywhere else.
+
+    // Close button — absolute, top-right of the whole box (outside sections)
     const closeBtn = document.createElement('button');
     closeBtn.className   = 'robot-toast-close';
     closeBtn.innerHTML   = '&times;';
@@ -276,22 +313,32 @@ class ToastItem {
     closeBtn.addEventListener('click', (e) => { e.stopPropagation(); this.close(); });
     box.appendChild(closeBtn);
 
-    // Message text
+    // Section 1 — body (message text). Always present.
+    const body = document.createElement('div');
+    body.className = 'robot-toast-body';
     const text = document.createElement('div');
     text.className = 'robot-toast-text';
-    box.appendChild(text);
+    body.appendChild(text);
+    box.appendChild(body);
 
-    // Button row (Undo / Retry / Cancel patterns). Buttons render in array
-    // order — the caller decides the visual hierarchy by ordering + optional
-    // custom `className` on each.
+    // Section 2 — footer (button rows). Rendered only when buttons exist.
     if (this.options.buttons && this.options.buttons.length > 0) {
-      const row = document.createElement('div');
-      row.className = 'robot-toast-actions';
-      this.options.buttons.forEach(btn => row.appendChild(this.buildButton(btn)));
-      box.appendChild(row);
+      const footer = document.createElement('div');
+      footer.className = 'robot-toast-footer';
+      // Chunk into rows per the layout spec (1→[1] 4→[2,2] 5→[3,2] 7→[3,2,2] …)
+      // then emit each row with `data-count` so CSS can pick the right split.
+      const rows = chunkButtons(this.options.buttons);
+      rows.forEach(rowBtns => {
+        const row = document.createElement('div');
+        row.className = 'robot-toast-row';
+        row.setAttribute('data-count', String(rowBtns.length));
+        rowBtns.forEach(btn => row.appendChild(this.buildButton(btn)));
+        footer.appendChild(row);
+      });
+      box.appendChild(footer);
     }
 
-    // Progress bar
+    // Progress bar — unchanged, always last.
     const pContainer = document.createElement('div');
     pContainer.className = 'robot-toast-progress-container';
     if (this.options.hideProgressBar) pContainer.style.display = 'none';
@@ -312,6 +359,17 @@ class ToastItem {
       ? `robot-toast-btn ${button.className}`
       : 'robot-toast-btn';
     el.textContent = button.label;
+
+    // Inline style: same kebab → camel conversion the message-level `style`
+    // option uses, so consumers can pass either form. Applied after className
+    // so it takes precedence over class-based rules.
+    if (button.style) {
+      Object.entries(button.style).forEach(([key, value]) => {
+        const camelKey = key.replace(/-([a-z])/g, g => g[1].toUpperCase());
+        (el.style as unknown as Record<string, string | number>)[camelKey] = value;
+      });
+    }
+
     el.addEventListener('click', (e) => {
       // Stop the click from bubbling to drag / hover handlers on the wrapper.
       e.stopPropagation();

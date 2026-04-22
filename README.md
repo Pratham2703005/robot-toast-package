@@ -142,7 +142,26 @@ toast({
 
 Clicking any button fires its `onClick` and then closes the toast automatically. A callback that throws is logged and the toast still closes, so a bad handler can't strand the toast on screen.
 
-All buttons get a neutral outline style by default. Pass a custom `className` on any button to override — e.g. mark one as a filled CTA via your own CSS, or use Tailwind utility classes directly.
+All buttons get a neutral outline style by default. Two ways to customize:
+
+- **`className`** — appends one or more class names to the button. Use when you have a stylesheet rule already defined (e.g. `.my-primary { background: black; color: white }`) or when using a utility framework like Tailwind.
+- **`style`** — inline CSS as a key/value object. Use for one-off styling without touching your stylesheet:
+
+```ts
+toast({
+  message: 'Send this email to 1,200 people?',
+  buttons: [
+    { label: 'Cancel', onClick: () => abort() },
+    {
+      label: 'Send',
+      onClick: () => send(),
+      style: { background: 'black', color: 'white' },
+    },
+  ],
+});
+```
+
+Inline `style` takes precedence over both `className`-driven rules and the default solo-CTA / outline styles. Kebab-case keys (`'border-radius'`) and camelCase keys (`borderRadius`) both work.
 
 ## Promise lifecycle
 
@@ -278,7 +297,7 @@ toast.success({ message: 'Deployed!', theme: 'colored', position: 'top-center', 
 | `rtl` | `boolean` | `false` | Right-to-left layout |
 | `limit` | `number` | `0` | Max toasts visible at once. `0` = unlimited. Excess is queued |
 | `newestOnTop` | `boolean` | `false` | Stack newest toasts above older ones |
-| `buttons` | `Array<{ label: string; onClick: (e: MouseEvent) => void; className?: string }>` | — | Inline buttons rendered in array order. Each click fires `onClick` then closes the toast. |
+| `buttons` | `Array<{ label: string; onClick: (e: MouseEvent) => void; className?: string; style?: Record<string, string \| number> }>` | — | Inline buttons rendered in array order. Each click fires `onClick` then closes the toast. Use `className` for stylesheet classes, `style` for inline CSS. |
 | `onOpen` | `() => void` | — | Callback fired when the toast finishes its entrance |
 | `onClose` | `() => void` | — | Callback fired after the toast fully exits |
 

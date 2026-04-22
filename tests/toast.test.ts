@@ -572,12 +572,12 @@ describe("buttons", () => {
     {
       input:  { buttons: [] },
       output: { labels: [] },
-      description: "empty array → no actions row at all",
+      description: "empty array → no footer section at all",
     },
     {
       input:  {},
       output: { labels: [] },
-      description: "buttons omitted → no actions row at all",
+      description: "buttons omitted → no footer section at all",
     },
   ];
 
@@ -585,14 +585,14 @@ describe("buttons", () => {
     const { toast } = await import("../src/index");
     toast({ message: "x", typeSpeed: 0, autoClose: false, ...input });
 
-    const row  = document.querySelector(".robot-toast-actions");
-    const btns = Array.from(document.querySelectorAll(".robot-toast-btn")) as HTMLButtonElement[];
+    const footer = document.querySelector(".robot-toast-footer");
+    const btns   = Array.from(document.querySelectorAll(".robot-toast-btn")) as HTMLButtonElement[];
 
     if (output.labels.length === 0) {
-      expect(row).toBeNull();
+      expect(footer).toBeNull();
       expect(btns.length).toBe(0);
     } else {
-      expect(row).not.toBeNull();
+      expect(footer).not.toBeNull();
       expect(btns.map(b => b.textContent)).toEqual(output.labels);
       btns.forEach(b => expect(b.type).toBe("button"));
     }
@@ -613,6 +613,29 @@ describe("buttons", () => {
     // Both share the base class, only the first gets the custom one.
     expect(btns[0].className).toBe("robot-toast-btn my-primary");
     expect(btns[1].className).toBe("robot-toast-btn");
+  });
+
+  it("applies inline `style` to the button element (camelCase + kebab keys)", async () => {
+    const { toast } = await import("../src/index");
+    toast({
+      message: "x",
+      typeSpeed: 0,
+      autoClose: false,
+      buttons: [
+        {
+          label: "Black",
+          onClick: () => {},
+          style: { background: "black", color: "white", "border-radius": "8px" },
+        },
+        { label: "Plain", onClick: () => {} },
+      ],
+    });
+    const btns = Array.from(document.querySelectorAll(".robot-toast-btn")) as HTMLButtonElement[];
+    expect(btns[0].style.background).toBe("black");
+    expect(btns[0].style.color).toBe("white");
+    expect(btns[0].style.borderRadius).toBe("8px");   // kebab key → camelCase
+    // The plain button has no inline overrides
+    expect(btns[1].style.background).toBe("");
   });
 
   it("clicking a button fires its callback and closes the toast", async () => {
@@ -697,6 +720,77 @@ describe("buttons", () => {
 
     // Drag never kicked in → no inline left written on the wrapper
     expect(wrapper.style.left).toBe("");
+  });
+});
+
+// ── Button row chunking (footer layout) ──────────────────────────────────────
+// Layout spec:
+//   1→[1]   2→[2]   3→[3]   4→[2,2]
+//   5→[3,2] 6→[3,3] 7→[3,2,2] 8→[3,3,2] 9→[3,3,3]
+//   10→[3,3,2,2]  11→[3,3,3,2]  12→[3,3,3,3]
+//
+// Rule: fill rows of 3 from the top; if the tail would strand a single lone
+// button, balance the last two rows as [2, 2] instead.
+describe("button row chunking", () => {
+  beforeEach(() => {
+    document.body.innerHTML = "";
+    document.head.innerHTML = "";
+    vi.resetModules();
+  });
+
+  const cases = [
+    { input: { n: 1  }, output: { shape: [1]        }, description: "1 button  → [1]"       },
+    { input: { n: 2  }, output: { shape: [2]        }, description: "2 buttons → [2]"       },
+    { input: { n: 3  }, output: { shape: [3]        }, description: "3 buttons → [3]"       },
+    { input: { n: 4  }, output: { shape: [2, 2]     }, description: "4 buttons → [2,2]"     },
+    { input: { n: 5  }, output: { shape: [3, 2]     }, description: "5 buttons → [3,2]"     },
+    { input: { n: 6  }, output: { shape: [3, 3]     }, description: "6 buttons → [3,3]"     },
+    { input: { n: 7  }, output: { shape: [3, 2, 2]  }, description: "7 buttons → [3,2,2]"   },
+    { input: { n: 8  }, output: { shape: [3, 3, 2]  }, description: "8 buttons → [3,3,2]"   },
+    { input: { n: 9  }, output: { shape: [3, 3, 3]  }, description: "9 buttons → [3,3,3]"   },
+    { input: { n: 10 }, output: { shape: [3, 3, 2, 2] }, description: "10 buttons → [3,3,2,2]" },
+    { input: { n: 13 }, output: { shape: [3, 3, 3, 2, 2] }, description: "13 buttons → [3,3,3,2,2]" },
+  ];
+
+  it.each(cases)("$description", async ({ input, output }) => {
+    const { toast } = await import("../src/index");
+    const buttons = Array.from({ length: input.n }, (_, i) => ({
+      label: `b${i + 1}`,
+      onClick: () => {},
+    }));
+    toast({ message: "x", typeSpeed: 0, autoClose: false, buttons });
+
+    const rows = Array.from(document.querySelectorAll(".robot-toast-row")) as HTMLElement[];
+    // Check row count
+    expect(rows.length).toBe(output.shape.length);
+    // Each row's data-count must match the expected row size
+    rows.forEach((row, i) => {
+      expect(row.getAttribute("data-count")).toBe(String(output.shape[i]));
+      expect(row.querySelectorAll(".robot-toast-btn").length).toBe(output.shape[i]);
+    });
+    // Overall button order is preserved (buttons flow left-to-right, top-to-bottom)
+    const allBtns = Array.from(document.querySelectorAll(".robot-toast-btn")) as HTMLButtonElement[];
+    expect(allBtns.map(b => b.textContent)).toEqual(
+      buttons.map(b => b.label),
+    );
+  });
+
+  it("solo button (n=1) gets data-count=1 AND is :only-child of the footer", async () => {
+    const { toast } = await import("../src/index");
+    toast({
+      message: "File deleted",
+      autoClose: false,
+      typeSpeed: 0,
+      buttons: [{ label: "Undo", onClick: () => {} }],
+    });
+    const footer = document.querySelector(".robot-toast-footer")!;
+    expect(footer.children.length).toBe(1);                       // single row
+    const row = footer.children[0] as HTMLElement;
+    expect(row.getAttribute("data-count")).toBe("1");
+    // The solo-CTA CSS selector targets this exact combo. We can't test
+    // computed style in jsdom reliably, but the selector-matching structure
+    // is what drives it.
+    expect(row.matches('.robot-toast-row[data-count="1"]:only-child')).toBe(true);
   });
 });
 

@@ -1,6 +1,6 @@
 {
   "name": "robot-toast",
-  "version": "2.0.1",
+  "version": "2.1.1",
   "description": "A lightweight, framework-agnostic toast notification library with an animated robot character. Tree-shakeable robots, draggable with swipe-to-dismiss, toast.promise(), and an optional React hook.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

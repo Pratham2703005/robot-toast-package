@@ -55,8 +55,23 @@ export interface ToastButton {
   label: string;
   /** Fired before the toast closes. Receives the click event. */
   onClick: (event: MouseEvent) => void;
-  /** Optional extra class appended to the button element for custom styling. */
+  /**
+   * Optional CSS class(es) appended to the button element. Use this when you
+   * have a stylesheet rule like `.my-primary { background: black; color: white }`
+   * defined elsewhere in your app and want to apply it to this button.
+   */
   className?: string;
+  /**
+   * Optional inline styles applied directly to the button element. Use this
+   * when you don't want to add a CSS rule to your stylesheet — pass an object
+   * of camelCased properties (or kebab-case keys; both work):
+   *
+   *   style: { background: 'black', color: 'white', borderRadius: '8px' }
+   *
+   * Takes precedence over className-based rules and over the default neutral
+   * (and solo-CTA) button styles.
+   */
+  style?: Record<string, string | number>;
 }
 
 export interface RobotToastOptions {
