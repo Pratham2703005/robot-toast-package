@@ -622,12 +622,14 @@ class ToastItem {
       this.messageBox.style.cursor = 'grab';
 
       // ── Snap to nearest horizontal screen edge ────────────────────────────
-      // Use cached width — no layout flush. We *do* need the live top/left
-      // to know where the user dropped it.
-      const rect      = this.wrapper.getBoundingClientRect();
+      // One getBoundingClientRect() on drop is fine — it's a single layout
+      // flush per release, not per frame. This is more robust than reading
+      // inline style.left, which can lag the rendered position in edge cases
+      // (parent transforms, pending animations, etc.).
+      const rect       = this.wrapper.getBoundingClientRect();
       const currentTop = rect.top;
       const midX       = rect.left + rect.width / 2;
-      const centerX     = window.innerWidth / 2;
+      const centerX    = window.innerWidth / 2;
 
       // Determine which edge to snap to based on which half the center is in
       const snapToLeft = midX < centerX;

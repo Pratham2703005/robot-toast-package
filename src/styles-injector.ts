@@ -322,50 +322,87 @@ class InjectStyles {
 
 .robot-toast-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   justify-content: flex-end;
   align-items: center;
-  margin-top: 8px;
-  padding-bottom: 10px;
+  margin-top: 4px;
+  padding-bottom: 8px;
   flex-wrap: wrap;
 }
 
 .robot-toast-btn {
   appearance: none;
   font: inherit;
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 500;
   line-height: 1;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 5px 10px;
+  border-radius: 5px;
   cursor: pointer;
   transition: background 0.15s ease, color 0.15s ease, transform 0.05s ease;
   white-space: nowrap;
-  background: #fff;
-  color: #18181b;
+  background: transparent;
+  color: #52525b;
   border: 1px solid #e4e4e7;
 }
-.robot-toast-btn:hover  { background: #f4f4f5; }
+.robot-toast-btn:hover  { background: #f4f4f5; color: #18181b; }
 .robot-toast-btn:active { transform: scale(0.97); }
+
+/*
+ * When there's only one button, it's implicitly the primary CTA — style it
+ * filled so it feels decisive (matches the Undo / Retry UX). As soon as a
+ * second button appears, both drop back to the neutral outline look and the
+ * caller distinguishes them with a custom className on the primary.
+ */
+.robot-toast-actions .robot-toast-btn:only-child {
+  background: #18181b;
+  color: #fafafa;
+  border-color: #18181b;
+  font-weight: 600;
+}
+.robot-toast-actions .robot-toast-btn:only-child:hover {
+  background: #000;
+  border-color: #000;
+  color: #fafafa;
+}
 
 /* Dark theme — inverted neutral */
 .robot-toast-message.robot-toast-theme-dark .robot-toast-btn {
-  background: #18181b;
-  color: #fafafa;
+  color: #a1a1aa;
   border-color: #3f3f46;
 }
 .robot-toast-message.robot-toast-theme-dark .robot-toast-btn:hover {
   background: #27272a;
+  color: #fafafa;
+}
+.robot-toast-message.robot-toast-theme-dark .robot-toast-actions .robot-toast-btn:only-child {
+  background: #fafafa;
+  color: #18181b;
+  border-color: #fafafa;
+}
+.robot-toast-message.robot-toast-theme-dark .robot-toast-actions .robot-toast-btn:only-child:hover {
+  background: #e4e4e7;
+  border-color: #e4e4e7;
+  color: #18181b;
 }
 
 /* Colored theme — translucent whites keep contrast on any gradient */
 .robot-toast-message.robot-toast-theme-colored .robot-toast-btn {
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.robot-toast-message.robot-toast-theme-colored .robot-toast-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+.robot-toast-message.robot-toast-theme-colored .robot-toast-actions .robot-toast-btn:only-child {
   background: rgba(255, 255, 255, 0.95);
   color: #18181b;
   border-color: transparent;
 }
-.robot-toast-message.robot-toast-theme-colored .robot-toast-btn:hover {
+.robot-toast-message.robot-toast-theme-colored .robot-toast-actions .robot-toast-btn:only-child:hover {
   background: #fff;
+  color: #18181b;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */

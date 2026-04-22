@@ -445,12 +445,21 @@ describe("drag", () => {
 
   function stubWrapper(el: HTMLElement, width = 200, height = 100, left = 100, top = 100) {
     (el as HTMLElement & { setPointerCapture: (id: number) => void }).setPointerCapture = () => {};
-    el.getBoundingClientRect = () => ({
-      x: left, y: top, left, top,
-      right: left + width, bottom: top + height,
-      width, height,
-      toJSON: () => ({}),
-    }) as DOMRect;
+    // Dynamic stub: reflects inline style.left / style.top the way a real
+    // browser would. onPointerUp reads getBoundingClientRect() to find the
+    // drop position, so the stub has to update as pointermove writes styles.
+    el.getBoundingClientRect = () => {
+      const liveLeft = parseFloat(el.style.left);
+      const liveTop  = parseFloat(el.style.top);
+      const l = Number.isFinite(liveLeft) ? liveLeft : left;
+      const t = Number.isFinite(liveTop)  ? liveTop  : top;
+      return {
+        x: l, y: t, left: l, top: t,
+        right: l + width, bottom: t + height,
+        width, height,
+        toJSON: () => ({}),
+      } as DOMRect;
+    };
   }
 
   async function setupDraggable() {
