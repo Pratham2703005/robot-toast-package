@@ -154,7 +154,7 @@ class InjectStyles {
   width: fit-content;
   min-width: 120px;
   max-width: min(400px, calc(100vw - 120px));
-  padding: 14px 40px 0 14px;
+  padding: 10px 40px 0 14px;
   border-radius: 8px;
   margin: 0;
   opacity: 0;
@@ -312,6 +312,60 @@ class InjectStyles {
   font-weight: 500;
   min-width: 0;
   min-height: 1.5em;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* INLINE BUTTONS — render via buttons: [{label, onClick, className?}, ...]   */
+/* Buttons render in array order. Default style is neutral; consumers layer   */
+/* their own visual hierarchy by passing a className.                         */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.robot-toast-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 8px;
+  padding-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.robot-toast-btn {
+  appearance: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.05s ease;
+  white-space: nowrap;
+  background: #fff;
+  color: #18181b;
+  border: 1px solid #e4e4e7;
+}
+.robot-toast-btn:hover  { background: #f4f4f5; }
+.robot-toast-btn:active { transform: scale(0.97); }
+
+/* Dark theme — inverted neutral */
+.robot-toast-message.robot-toast-theme-dark .robot-toast-btn {
+  background: #18181b;
+  color: #fafafa;
+  border-color: #3f3f46;
+}
+.robot-toast-message.robot-toast-theme-dark .robot-toast-btn:hover {
+  background: #27272a;
+}
+
+/* Colored theme — translucent whites keep contrast on any gradient */
+.robot-toast-message.robot-toast-theme-colored .robot-toast-btn {
+  background: rgba(255, 255, 255, 0.95);
+  color: #18181b;
+  border-color: transparent;
+}
+.robot-toast-message.robot-toast-theme-colored .robot-toast-btn:hover {
+  background: #fff;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -568,6 +622,13 @@ class InjectStyles {
 /* RESPONSIVE - Mobile / small-screen tweaks                                */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
+/*
+ * Small-viewport tweaks. No !important / edge-to-edge override here — the
+ * wrapper keeps its configured position preset and the message box stays
+ * content-sized (just capped by max-width so it doesn't overflow). Drag
+ * still works everywhere because no stylesheet rule competes with the
+ * inline position the drag handler writes.
+ */
 @media (max-width: 600px) {
   .robot-toast-wrapper {
     gap: 8px;
@@ -575,16 +636,12 @@ class InjectStyles {
   }
 
   .robot-toast-wrapper.robot-toast-top-right,
-  .robot-toast-wrapper.robot-toast-bottom-right {
-    right: 12px;
-  }
+  .robot-toast-wrapper.robot-toast-bottom-right { right: 12px; }
   .robot-toast-wrapper.robot-toast-top-left,
-  .robot-toast-wrapper.robot-toast-bottom-left {
-    left: 12px;
-  }
+  .robot-toast-wrapper.robot-toast-bottom-left  { left:  12px; }
   .robot-toast-wrapper.robot-toast-top-right,
   .robot-toast-wrapper.robot-toast-top-left,
-  .robot-toast-wrapper.robot-toast-top-center { top: 12px; }
+  .robot-toast-wrapper.robot-toast-top-center    { top:    12px; }
   .robot-toast-wrapper.robot-toast-bottom-right,
   .robot-toast-wrapper.robot-toast-bottom-left,
   .robot-toast-wrapper.robot-toast-bottom-center { bottom: 12px; }
@@ -604,7 +661,7 @@ class InjectStyles {
     min-width: 100px;
     max-width: calc(100vw - 48px - 24px - 8px);
     font-size: 13px;
-    padding: 12px 36px 0 12px;
+    padding: 10px 36px 0 12px;
   }
 
   .robot-toast-text {

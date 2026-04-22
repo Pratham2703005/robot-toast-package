@@ -34,6 +34,31 @@ export type ToastTheme = typeof TOAST_THEMES[number];
 /** Type derived from TOAST_TRANSITIONS constant */
 export type TransitionType = typeof TOAST_TRANSITIONS[number];
 
+/**
+ * A button rendered inside the toast. Pass an array of these as `buttons`
+ * to add inline CTAs like "Undo" / "Retry" / "Cancel":
+ *
+ *   toast({
+ *     message: 'File deleted',
+ *     buttons: [
+ *       { label: 'Undo', onClick: () => restore() },
+ *     ],
+ *   });
+ *
+ * Buttons render in array order. Clicking any of them fires its `onClick`
+ * and then closes the toast. Visual hierarchy is up to you — pass a custom
+ * `className` to override the default neutral style (e.g. to mark the
+ * primary CTA as filled/bold and a secondary as muted).
+ */
+export interface ToastButton {
+  /** Visible button text. Keep it short (1–2 words). */
+  label: string;
+  /** Fired before the toast closes. Receives the click event. */
+  onClick: (event: MouseEvent) => void;
+  /** Optional extra class appended to the button element for custom styling. */
+  className?: string;
+}
+
 export interface RobotToastOptions {
   /** The message text to display in the toast */
   message: string;
@@ -110,6 +135,13 @@ export interface RobotToastOptions {
 
   /** Entry / exit transition style. Default: 'bounce' */
   transition?: TransitionType;
+
+  /**
+   * Inline buttons to render inside the toast (e.g. Undo, Retry, Cancel).
+   * Rendered in array order. Each click fires the button's `onClick` and
+   * then closes the toast automatically.
+   */
+  buttons?: ToastButton[];
 
   /** Called when the toast finishes its enter animation and is fully visible. */
   onOpen?: () => void;

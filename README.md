@@ -39,7 +39,7 @@ A lightweight, zero-dependency, framework-agnostic toast notification library fe
 
 - **36% smaller core bundle** (61 KB → 39 KB). Robots moved to a tree-shakeable subpath — only the ones you import end up in your bundle.
 - **Opt-in robots.** Omitting `robotVariant` renders *no robot* now. Pass `'default'` or import from `robot-toast/robots` to bring one back.
-- **Mobile drag actually works.** `touch-action: none` stops the page fighting the gesture, and cached rects kill the layout-thrash jank on slower devices.
+- **Inline buttons.** Pass a `buttons` array for Undo / Retry / Cancel-style inline CTAs — rendered in array order, optional `className` per button for custom visual hierarchy.
 - **`toast.promise()`** — attach loading/success/error toasts to any promise.
 - **React subpath.** `useRobotToast()` + `useToastOnMount()` as optional ergonomic bindings.
 - **ARIA roles.** `role="alert"` for `error`/`warning`, `role="status"` elsewhere, plus `aria-atomic` and a labeled close button.
@@ -116,6 +116,33 @@ Prefer the built-in inline SVG with no extra import?
 ```ts
 toast({ message: 'Hello', robotVariant: 'default' });
 ```
+
+## Inline buttons
+
+Add inline buttons for patterns like Undo, Retry, or Confirm / Cancel. They render in array order — the caller controls the visual hierarchy:
+
+```ts
+// Undo pattern — one button
+toast({
+  message: 'File deleted',
+  buttons: [
+    { label: 'Undo', onClick: () => restoreFile() },
+  ],
+});
+
+// Confirm + cancel — cancel on the left, primary CTA on the right
+toast({
+  message: 'Send this email to 1,200 people?',
+  buttons: [
+    { label: 'Cancel', onClick: () => abort() },
+    { label: 'Send',   onClick: () => send(), className: 'my-primary' },
+  ],
+});
+```
+
+Clicking any button fires its `onClick` and then closes the toast automatically. A callback that throws is logged and the toast still closes, so a bad handler can't strand the toast on screen.
+
+All buttons get a neutral outline style by default. Pass a custom `className` on any button to override — e.g. mark one as a filled CTA via your own CSS, or use Tailwind utility classes directly.
 
 ## Promise lifecycle
 
@@ -251,6 +278,7 @@ toast.success({ message: 'Deployed!', theme: 'colored', position: 'top-center', 
 | `rtl` | `boolean` | `false` | Right-to-left layout |
 | `limit` | `number` | `0` | Max toasts visible at once. `0` = unlimited. Excess is queued |
 | `newestOnTop` | `boolean` | `false` | Stack newest toasts above older ones |
+| `buttons` | `Array<{ label: string; onClick: (e: MouseEvent) => void; className?: string }>` | — | Inline buttons rendered in array order. Each click fires `onClick` then closes the toast. |
 | `onOpen` | `() => void` | — | Callback fired when the toast finishes its entrance |
 | `onClose` | `() => void` | — | Callback fired after the toast fully exits |
 
@@ -331,13 +359,15 @@ toast({ message: 'Slide!',  transition: 'slide'  });
 
 ---
 
-## Drag
+## Drag & responsive layout
 
 When `draggable` is on (default):
 
 - **Drag anywhere** on the toast to move it. On release it snaps to the nearest horizontal edge — including when you drag all the way across the screen.
-- Mobile-friendly: `touch-action: none` prevents the browser from fighting the drag, and rect dimensions are cached on pointerdown to eliminate layout-thrash jank on low-end devices.
-- Use the **close button** or `toast.closeById()` / `toast.closeAll()` to dismiss programmatically.
+- `touch-action: none` prevents the browser from fighting the drag, and rect dimensions are cached on pointerdown to eliminate layout-thrash jank on low-end devices.
+- Use the **close button**, an **action button**, or `toast.closeById()` / `toast.closeAll()` to dismiss programmatically.
+
+**On viewports ≤ 600 px** the toast shrinks slightly (tighter gutters, smaller robot, smaller font) but keeps its configured position preset. Drag still works everywhere.
 
 ---
 

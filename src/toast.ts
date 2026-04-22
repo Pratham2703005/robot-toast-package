@@ -14,7 +14,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import type { RobotToastOptions, ToastQueueItem } from './types';
+import type { RobotToastOptions, ToastQueueItem, ToastButton } from './types';
 import InjectStyles from './styles-injector';
 
 // ─── Unique ID counter ────────────────────────────────────────────────────────
@@ -45,6 +45,7 @@ class ToastItem {
     pauseOnHover: boolean;
     rtl: boolean;
     transition: NonNullable<RobotToastOptions['transition']>;
+    buttons?: ToastButton[];
     onOpen?: () => void;
     onClose?: () => void;
   };
@@ -100,6 +101,7 @@ class ToastItem {
       pauseOnHover:     options.pauseOnHover     ?? true,
       rtl:              options.rtl              ?? false,
       transition:       options.transition       ?? 'bounce',
+      buttons:          options.buttons,
       onOpen:           options.onOpen,
       onClose:          options.onClose,
     };
@@ -279,6 +281,16 @@ class ToastItem {
     text.className = 'robot-toast-text';
     box.appendChild(text);
 
+    // Button row (Undo / Retry / Cancel patterns). Buttons render in array
+    // order — the caller decides the visual hierarchy by ordering + optional
+    // custom `className` on each.
+    if (this.options.buttons && this.options.buttons.length > 0) {
+      const row = document.createElement('div');
+      row.className = 'robot-toast-actions';
+      this.options.buttons.forEach(btn => row.appendChild(this.buildButton(btn)));
+      box.appendChild(row);
+    }
+
     // Progress bar
     const pContainer = document.createElement('div');
     pContainer.className = 'robot-toast-progress-container';
@@ -291,6 +303,28 @@ class ToastItem {
     box.appendChild(pContainer);
 
     return box;
+  }
+
+  private buildButton(button: ToastButton): HTMLButtonElement {
+    const el = document.createElement('button');
+    el.type        = 'button';
+    el.className   = button.className
+      ? `robot-toast-btn ${button.className}`
+      : 'robot-toast-btn';
+    el.textContent = button.label;
+    el.addEventListener('click', (e) => {
+      // Stop the click from bubbling to drag / hover handlers on the wrapper.
+      e.stopPropagation();
+      // Fire the callback, then dismiss. If the callback throws we still
+      // close — otherwise a bad handler strands the toast on screen.
+      try {
+        button.onClick(e);
+      } catch (err) {
+        console.error('[robot-toast] button onClick threw:', err);
+      }
+      this.close();
+    });
+    return el;
   }
 
   private assembleLayout(): void {
@@ -529,7 +563,11 @@ class ToastItem {
 
     // ── Pointer events (covers both mouse & touch via pointer API) ──────────
     const onPointerDown = (e: PointerEvent) => {
-      if ((e.target as HTMLElement).closest('.robot-toast-close')) return;
+      // Clicks / taps on the close button or any inline action button must
+      // never initiate a drag — otherwise the user can't actually press them.
+      if ((e.target as HTMLElement).closest(
+        '.robot-toast-close, .robot-toast-btn'
+      )) return;
       // Only primary button / first touch
       if (e.button !== undefined && e.button !== 0) return;
 
@@ -586,9 +624,9 @@ class ToastItem {
       // ── Snap to nearest horizontal screen edge ────────────────────────────
       // Use cached width — no layout flush. We *do* need the live top/left
       // to know where the user dropped it.
-      const currentLeft = parseFloat(this.wrapper.style.left) || 0;
-      const currentTop  = parseFloat(this.wrapper.style.top)  || 0;
-      const midX        = currentLeft + this.dragWidth / 2;
+      const rect      = this.wrapper.getBoundingClientRect();
+      const currentTop = rect.top;
+      const midX       = rect.left + rect.width / 2;
       const centerX     = window.innerWidth / 2;
 
       // Determine which edge to snap to based on which half the center is in

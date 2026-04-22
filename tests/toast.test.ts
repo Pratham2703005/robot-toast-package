@@ -521,6 +521,231 @@ describe("drag", () => {
   });
 });
 
+// ── Inline buttons (Undo / Retry / Cancel pattern) ───────────────────────────
+describe("buttons", () => {
+  beforeEach(() => {
+    document.body.innerHTML = "";
+    document.head.innerHTML = "";
+    vi.resetModules();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  const renderCases = [
+    {
+      input:  { buttons: [{ label: "Undo", onClick: () => {} }] },
+      output: { labels: ["Undo"] },
+      description: "single button renders one .robot-toast-btn",
+    },
+    {
+      input: {
+        buttons: [
+          { label: "Dismiss", onClick: () => {} },
+          { label: "Undo",    onClick: () => {} },
+        ],
+      },
+      output: { labels: ["Dismiss", "Undo"] },
+      description: "two buttons render in array order (left → right)",
+    },
+    {
+      input: {
+        buttons: [
+          { label: "One",   onClick: () => {} },
+          { label: "Two",   onClick: () => {} },
+          { label: "Three", onClick: () => {} },
+        ],
+      },
+      output: { labels: ["One", "Two", "Three"] },
+      description: "three buttons render in array order",
+    },
+    {
+      input:  { buttons: [] },
+      output: { labels: [] },
+      description: "empty array → no actions row at all",
+    },
+    {
+      input:  {},
+      output: { labels: [] },
+      description: "buttons omitted → no actions row at all",
+    },
+  ];
+
+  it.each(renderCases)("render: $description", async ({ input, output }) => {
+    const { toast } = await import("../src/index");
+    toast({ message: "x", typeSpeed: 0, autoClose: false, ...input });
+
+    const row  = document.querySelector(".robot-toast-actions");
+    const btns = Array.from(document.querySelectorAll(".robot-toast-btn")) as HTMLButtonElement[];
+
+    if (output.labels.length === 0) {
+      expect(row).toBeNull();
+      expect(btns.length).toBe(0);
+    } else {
+      expect(row).not.toBeNull();
+      expect(btns.map(b => b.textContent)).toEqual(output.labels);
+      btns.forEach(b => expect(b.type).toBe("button"));
+    }
+  });
+
+  it("passes a custom className through to the button element", async () => {
+    const { toast } = await import("../src/index");
+    toast({
+      message: "x",
+      typeSpeed: 0,
+      autoClose: false,
+      buttons: [
+        { label: "Send",   onClick: () => {}, className: "my-primary" },
+        { label: "Cancel", onClick: () => {} },
+      ],
+    });
+    const btns = Array.from(document.querySelectorAll(".robot-toast-btn")) as HTMLButtonElement[];
+    // Both share the base class, only the first gets the custom one.
+    expect(btns[0].className).toBe("robot-toast-btn my-primary");
+    expect(btns[1].className).toBe("robot-toast-btn");
+  });
+
+  it("clicking a button fires its callback and closes the toast", async () => {
+    vi.useFakeTimers();
+    const { toast } = await import("../src/index");
+    const spyA = vi.fn();
+    const spyB = vi.fn();
+    toast({
+      message: "File deleted",
+      autoClose: false,
+      typeSpeed: 0,
+      buttons: [
+        { label: "Dismiss", onClick: spyA },
+        { label: "Undo",    onClick: spyB },
+      ],
+    });
+
+    const btns = Array.from(document.querySelectorAll(".robot-toast-btn")) as HTMLButtonElement[];
+    btns[1].click(); // Undo
+
+    expect(spyA).not.toHaveBeenCalled();
+    expect(spyB).toHaveBeenCalledTimes(1);
+
+    document.querySelectorAll(".robot-toast-message").forEach(el =>
+      el.dispatchEvent(new Event("animationend")),
+    );
+    document.querySelectorAll(".robot-toast-robot").forEach(el =>
+      el.dispatchEvent(new Event("animationend")),
+    );
+    vi.advanceTimersByTime(300);
+    expect(document.querySelectorAll(".robot-toast-wrapper").length).toBe(0);
+  });
+
+  it("a throwing button callback still closes the toast", async () => {
+    vi.useFakeTimers();
+    const { toast } = await import("../src/index");
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    toast({
+      message: "x",
+      autoClose: false,
+      typeSpeed: 0,
+      buttons: [{ label: "Bad", onClick: () => { throw new Error("boom"); } }],
+    });
+    (document.querySelector(".robot-toast-btn") as HTMLButtonElement).click();
+
+    document.querySelectorAll(".robot-toast-message").forEach(el =>
+      el.dispatchEvent(new Event("animationend")),
+    );
+    document.querySelectorAll(".robot-toast-robot").forEach(el =>
+      el.dispatchEvent(new Event("animationend")),
+    );
+    vi.advanceTimersByTime(300);
+
+    expect(errSpy).toHaveBeenCalled();
+    expect(document.querySelectorAll(".robot-toast-wrapper").length).toBe(0);
+    errSpy.mockRestore();
+  });
+
+  it("pointerdown on a button does not start a drag", async () => {
+    const { toast } = await import("../src/index");
+    toast({
+      message: "x",
+      draggable: true,
+      autoClose: false,
+      typeSpeed: 0,
+      buttons: [{ label: "Undo", onClick: () => {} }],
+    });
+    const wrapper = document.querySelector(".robot-toast-wrapper") as HTMLElement;
+    (wrapper as HTMLElement & { setPointerCapture: (id: number) => void })
+      .setPointerCapture = () => {};
+    wrapper.getBoundingClientRect = () => ({
+      x: 100, y: 100, left: 100, top: 100, right: 300, bottom: 200,
+      width: 200, height: 100, toJSON: () => ({}),
+    }) as DOMRect;
+
+    const btn = document.querySelector(".robot-toast-btn") as HTMLButtonElement;
+    const down = new Event("pointerdown", { bubbles: true, cancelable: true }) as Event & {
+      clientX: number; clientY: number; pointerId: number; button: number;
+    };
+    down.clientX = 250; down.clientY = 150; down.pointerId = 1; down.button = 0;
+    btn.dispatchEvent(down);
+
+    // Drag never kicked in → no inline left written on the wrapper
+    expect(wrapper.style.left).toBe("");
+  });
+});
+
+// ── Responsive CSS (no JS-side drag disable) ─────────────────────────────────
+describe("mobile CSS", () => {
+  beforeEach(() => {
+    document.body.innerHTML = "";
+    document.head.innerHTML = "";
+    vi.resetModules();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    (window as unknown as { innerWidth: number }).innerWidth = 1024;
+  });
+
+  it("injects a small-viewport media query at the 600px breakpoint", async () => {
+    const { toast } = await import("../src/index");
+    toast("trigger");
+    const all = Array.from(document.head.querySelectorAll("style"))
+      .map(s => s.textContent ?? "").join("\n");
+    expect(all).toMatch(/@media \(max-width: 600px\)/);
+  });
+
+  it("responsive CSS does NOT use !important overrides (drag must keep working)", async () => {
+    const { toast } = await import("../src/index");
+    toast("trigger");
+    const all = Array.from(document.head.querySelectorAll("style"))
+      .map(s => s.textContent ?? "").join("\n");
+    // Guard against re-regressing to the edge-to-edge !important layout that
+    // fought the drag handler's inline left/top.
+    expect(all).not.toMatch(/left:\s*16px\s*!important/);
+    expect(all).not.toMatch(/right:\s*16px\s*!important/);
+  });
+
+  it("drag works at a mobile-sized viewport", async () => {
+    (window as unknown as { innerWidth: number }).innerWidth = 375;
+    const { toast } = await import("../src/index");
+    toast({ message: "mobile", draggable: true, autoClose: false, typeSpeed: 0 });
+    const wrapper = document.querySelector(".robot-toast-wrapper") as HTMLElement;
+    (wrapper as HTMLElement & { setPointerCapture: (id: number) => void })
+      .setPointerCapture = () => {};
+    wrapper.getBoundingClientRect = () => ({
+      x: 50, y: 50, left: 50, top: 50, right: 250, bottom: 150,
+      width: 200, height: 100, toJSON: () => ({}),
+    }) as DOMRect;
+
+    const down = new Event("pointerdown", { bubbles: true, cancelable: true }) as Event & {
+      clientX: number; clientY: number; pointerId: number; button: number;
+    };
+    down.clientX = 100; down.clientY = 80; down.pointerId = 1; down.button = 0;
+    wrapper.dispatchEvent(down);
+
+    // Drag activated → inline left written
+    expect(wrapper.style.left).toBe("50px");
+  });
+});
+
 // ── React wrapper ────────────────────────────────────────────────────────────
 describe("robot-toast/react", () => {
   beforeEach(() => {
