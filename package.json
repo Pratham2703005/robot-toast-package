@@ -1,31 +1,64 @@
 {
   "name": "robot-toast",
-  "version": "1.0.1",
-  "description": "A lightweight, framework-agnostic toast notification library with an animated robot character. Draggable, typed messages, customizable positions, and SVG robot variants.",
+  "version": "2.0.0-beta.2",
+  "description": "A lightweight, framework-agnostic toast notification library with an animated robot character. Tree-shakeable robots, draggable with swipe-to-dismiss, toast.promise(), and an optional React hook.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     },
-    "./styles.css": "./dist/styles.css"
+    "./robots": {
+      "import": {
+        "types": "./dist/robots.d.mts",
+        "default": "./dist/robots.mjs"
+      },
+      "require": {
+        "types": "./dist/robots.d.ts",
+        "default": "./dist/robots.js"
+      }
+    },
+    "./react": {
+      "import": {
+        "types": "./dist/react.d.mts",
+        "default": "./dist/react.mjs"
+      },
+      "require": {
+        "types": "./dist/react.d.ts",
+        "default": "./dist/react.js"
+      }
+    }
   },
   "sideEffects": [
     "*.css",
-    "./src/styles-injector.ts"
+    "**/styles-injector.*",
+    "./src/index.ts",
+    "./src/react/index.ts",
+    "./dist/index.js",
+    "./dist/index.mjs",
+    "./dist/react.js",
+    "./dist/react.mjs"
   ],
   "files": [
-    "dist"
+    "dist",
+    "MIGRATION.md"
   ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rimraf dist",
     "prepublishOnly": "npm run build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [
     "toast",
@@ -33,17 +66,35 @@
     "robot",
     "animated",
     "draggable",
+    "swipe-to-dismiss",
     "typescript",
     "lightweight",
-    "framework-agnostic"
+    "tree-shakeable",
+    "react",
+    "framework-agnostic",
+    "a11y",
+    "aria"
   ],
-  "author": "",
+  "author": "Pratham Israni",
   "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@types/node": "^25.3.0",
+    "@types/react": "^19.2.14",
+    "@vitest/ui": "^4.1.5",
+    "jsdom": "^29.0.2",
+    "react": "^19.2.5",
     "rimraf": "^6.1.3",
     "tsup": "^8.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.5"
   },
   "engines": {
     "node": ">=16"
@@ -53,7 +104,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Pratham2703005/robot-toast-package"
+    "url": "git+https://github.com/Pratham2703005/robot-toast-package.git"
   },
   "bugs": {
     "url": "https://github.com/Pratham2703005/robot-toast-package/issues"

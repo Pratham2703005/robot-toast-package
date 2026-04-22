@@ -16,7 +16,6 @@
 
 import type { RobotToastOptions, ToastQueueItem } from './types';
 import InjectStyles from './styles-injector';
-import { ROBOT_IMAGES } from './robot-data';
 
 // ─── Unique ID counter ────────────────────────────────────────────────────────
 let _nextId = 1;
@@ -67,6 +66,8 @@ class ToastItem {
   private isDragging = false;
   private dragOffsetX = 0;
   private dragOffsetY = 0;
+  private dragWidth = 0;
+  private dragHeight = 0;
   private currentRobotSide: 'left' | 'right';
   private isHovered = false;
   private isFocusLost = false;
@@ -188,53 +189,60 @@ class ToastItem {
     const classes = ['robot-toast-wrapper', `robot-toast-${this.options.position}`];
     if (this.options.rtl) classes.push('robot-toast-rtl');
     w.className = classes.join(' ');
+
+    // ARIA: error/warning are assertive (role=alert), everything else polite (role=status).
+    const assertive = this.options.type === 'error' || this.options.type === 'warning';
+    w.setAttribute('role', assertive ? 'alert' : 'status');
+    w.setAttribute('aria-live', assertive ? 'assertive' : 'polite');
+    w.setAttribute('aria-atomic', 'true');
+
     return w;
+  }
+
+  /**
+   * Decides what a given `robotVariant` resolves to:
+   *  - `'hidden'`   — not shown at all (omitted, '' empty, 'none' alias, or unusable string)
+   *  - `'default'`  — built-in inline SVG
+   *  - `'image'`    — external image source (data URL or file path)
+   */
+  private resolveVariant(): 'hidden' | 'default' | 'image' {
+    const v = this.options.robotVariant;
+    if (!v || v === 'none') return 'hidden';
+    if (v === 'default') return 'default';
+    const ALLOWED_EXTS = ['.svg', '.png', '.jpg', '.jpeg', '.gif', '.webp'];
+    const isDataUrl = v.startsWith('data:');
+    const isAllowed = isDataUrl
+      || ALLOWED_EXTS.some(ext => v.toLowerCase().endsWith(ext));
+    return isAllowed ? 'image' : 'hidden';
   }
 
   private buildRobot(): HTMLDivElement {
     const r = document.createElement('div');
     r.className = 'robot-toast-robot';
 
-    const variant = this.options.robotVariant;
+    const kind = this.resolveVariant();
 
-    if (variant === 'none') {
-      // 'none' = no robot image at all, hide the container
+    if (kind === 'hidden') {
       r.style.display = 'none';
-    } else if (variant) {
-      // Check if it's a built-in robot (data URL)
-      if (variant in ROBOT_IMAGES) {
-        // Use embedded data URL
-        const img = document.createElement('img');
-        img.src    = ROBOT_IMAGES[variant as keyof typeof ROBOT_IMAGES];
-        img.alt    = 'Robot';
-        img.setAttribute('width',  '65');
-        img.setAttribute('height', '70');
-        img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
-        img.onerror = () => { r.innerHTML = this.getBuiltinSVG(); };
-        r.appendChild(img);
-      } else {
-        // Custom image – user provides full path, fall back to built-in SVG on error
-        const ALLOWED_FORMATS = ['.svg', '.png', '.jpg', '.jpeg', '.gif', '.webp'];
-        const isAllowed = ALLOWED_FORMATS.some(ext => variant.toLowerCase().endsWith(ext));
-
-        if (!isAllowed) {
-          r.innerHTML = this.getBuiltinSVG();
-        } else {
-          const img = document.createElement('img');
-          img.src    = variant;  // User provides full path directly
-          img.alt    = 'Robot';
-          img.setAttribute('width',  '65');
-          img.setAttribute('height', '70');
-          img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
-          img.onerror = () => { r.innerHTML = this.getBuiltinSVG(); };
-          r.appendChild(img);
-        }
-      }
-    } else {
-      // Empty string / undefined = built-in robot
-      r.innerHTML = this.getBuiltinSVG();
+      return r;
     }
 
+    if (kind === 'default') {
+      r.innerHTML = this.getBuiltinSVG();
+      return r;
+    }
+
+    // kind === 'image' — data URL or recognized path. Fall back to the
+    // built-in SVG only if the image fails to load at runtime (the user
+    // clearly intended a robot, so we don't want an empty slot).
+    const img = document.createElement('img');
+    img.src    = this.options.robotVariant;
+    img.alt    = 'Robot';
+    img.setAttribute('width',  '65');
+    img.setAttribute('height', '70');
+    img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;';
+    img.onerror = () => { r.innerHTML = this.getBuiltinSVG(); };
+    r.appendChild(img);
     return r;
   }
 
@@ -261,6 +269,8 @@ class ToastItem {
     closeBtn.className   = 'robot-toast-close';
     closeBtn.innerHTML   = '&times;';
     closeBtn.title       = 'Dismiss';
+    closeBtn.type        = 'button';
+    closeBtn.setAttribute('aria-label', 'Dismiss notification');
     closeBtn.addEventListener('click', (e) => { e.stopPropagation(); this.close(); });
     box.appendChild(closeBtn);
 
@@ -305,7 +315,7 @@ class ToastItem {
     // Step 1 – wrapper becomes visible
     this.wrapper.classList.add('robot-toast-visible');
 
-    const robotHidden = this.options.robotVariant === 'none';
+    const robotHidden = this.resolveVariant() === 'hidden';
     const messageHidden = this.options.message === '';
 
     const showMessage = () => {
@@ -355,7 +365,7 @@ class ToastItem {
   }
 
   private playExit(done: () => void): void {
-    const robotHidden = this.options.robotVariant === 'none';
+    const robotHidden = this.resolveVariant() === 'hidden';
     const messageHidden = this.options.message === '';
 
     const afterMsg = () => {
@@ -539,6 +549,11 @@ class ToastItem {
       this.wrapper.style.bottom = 'auto';
       this.wrapper.style.transform = 'none';
 
+      // Cache size — width/height don't change during drag, so we avoid a
+      // layout read on every pointermove (major mobile jank source).
+      this.dragWidth  = rect.width;
+      this.dragHeight = rect.height;
+
       // Offset = where inside the wrapper the pointer grabbed
       this.dragOffsetX = e.clientX - rect.left;
       this.dragOffsetY = e.clientY - rect.top;
@@ -551,9 +566,9 @@ class ToastItem {
       if (!this.isDragging) return;
       e.preventDefault();
 
-      const wRect = this.wrapper.getBoundingClientRect();
-      const maxX  = window.innerWidth  - wRect.width;
-      const maxY  = window.innerHeight - wRect.height;
+      // Use cached width/height + live window dims — no layout flush.
+      const maxX = window.innerWidth  - this.dragWidth;
+      const maxY = window.innerHeight - this.dragHeight;
 
       const newLeft = Math.max(0, Math.min(e.clientX - this.dragOffsetX, maxX));
       const newTop  = Math.max(0, Math.min(e.clientY - this.dragOffsetY, maxY));
@@ -562,28 +577,31 @@ class ToastItem {
       this.wrapper.style.top  = `${newTop}px`;
     };
 
-    const onPointerUp = (e: PointerEvent) => {
+    const onPointerUp = (_e: PointerEvent) => {
       if (!this.isDragging) return;
       this.isDragging = false;
       this.wrapper.classList.remove('robot-toast-dragging');
       this.messageBox.style.cursor = 'grab';
 
       // ── Snap to nearest horizontal screen edge ────────────────────────────
-      const wRect  = this.wrapper.getBoundingClientRect();
-      const midX   = wRect.left + wRect.width / 2;
-      const centerX = window.innerWidth / 2;
-      
+      // Use cached width — no layout flush. We *do* need the live top/left
+      // to know where the user dropped it.
+      const currentLeft = parseFloat(this.wrapper.style.left) || 0;
+      const currentTop  = parseFloat(this.wrapper.style.top)  || 0;
+      const midX        = currentLeft + this.dragWidth / 2;
+      const centerX     = window.innerWidth / 2;
+
       // Determine which edge to snap to based on which half the center is in
       const snapToLeft = midX < centerX;
-      
+
       // Determine robot side based on nearScreen setting
-      const newRobotSide: 'left' | 'right' = this.options.nearScreen 
+      const newRobotSide: 'left' | 'right' = this.options.nearScreen
         ? (snapToLeft ? 'left' : 'right')
         : (snapToLeft ? 'right' : 'left');
-      
+
       // Determine final resting left position (20px margin from edge)
-      const finalLeft = snapToLeft ? 20 : window.innerWidth - wRect.width - 20;
-      const finalTop  = Math.max(20, Math.min(wRect.top, window.innerHeight - wRect.height - 20));
+      const finalLeft = snapToLeft ? 20 : window.innerWidth - this.dragWidth - 20;
+      const finalTop  = Math.max(20, Math.min(currentTop, window.innerHeight - this.dragHeight - 20));
 
       // Re-enable transitions for the snap glide
       this.wrapper.style.transition =

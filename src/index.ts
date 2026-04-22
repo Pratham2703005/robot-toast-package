@@ -77,6 +77,75 @@ toast.closeById = (id: number): void => {
   RobotToastManager.getInstance().closeById(id);
 };
 
+// ── Promise helper ────────────────────────────────────────────────────────────
+
+type PromiseMessage<T, E = unknown> = {
+  loading: string | Partial<RobotToastOptions>;
+  success: string | ((value: T) => string | Partial<RobotToastOptions>);
+  error:   string | ((err: E) => string | Partial<RobotToastOptions>);
+};
+
+/**
+ * Attach a toast lifecycle to a promise.
+ * Shows a persistent `loading` toast; on settlement, closes it and shows a
+ * `success` or `error` toast. Returns the original promise unchanged so
+ * callers can still await / chain it.
+ *
+ * @example
+ * toast.promise(fetch('/api/save'), {
+ *   loading: 'Saving…',
+ *   success: 'Saved!',
+ *   error:   'Save failed',
+ * });
+ */
+toast.promise = <T, E = unknown>(
+  promise: Promise<T>,
+  messages: PromiseMessage<T, E>,
+): Promise<T> => {
+  if (typeof window === 'undefined') return promise;
+
+  const loadingOpts: RobotToastOptions =
+    typeof messages.loading === 'string'
+      ? { message: messages.loading }
+      : { message: '', ...messages.loading };
+
+  const loadingId = toast({
+    autoClose: false,
+    hideProgressBar: true,
+    ...loadingOpts,
+    // Override typeSpeed for loading so the text appears immediately — a loading
+    // state that types letter-by-letter feels wrong.
+    typeSpeed: loadingOpts.typeSpeed ?? 0,
+  });
+
+  const resolveOptions = (
+    v: string | Partial<RobotToastOptions>,
+    fallbackType: RobotToastOptions['type'],
+  ): RobotToastOptions => {
+    const base = typeof v === 'string' ? { message: v } : { message: '', ...v };
+    return { type: fallbackType, ...base };
+  };
+
+  return promise.then(
+    (value) => {
+      toast.closeById(loadingId);
+      const next = typeof messages.success === 'function'
+        ? messages.success(value)
+        : messages.success;
+      toast(resolveOptions(next, 'success'));
+      return value;
+    },
+    (err: E) => {
+      toast.closeById(loadingId);
+      const next = typeof messages.error === 'function'
+        ? messages.error(err)
+        : messages.error;
+      toast(resolveOptions(next, 'error'));
+      throw err;
+    },
+  );
+};
+
 export { toast };
 
 // ─── Class export ──────────────────────────────────────────────────────────
@@ -111,10 +180,6 @@ export {
   TOAST_THEMES,
   TOAST_TRANSITIONS,
 } from './types';
-
-// ─── Built-in robot images ─────────────────────────────────────────────────
-
-export { ROBOT_IMAGES } from './robot-data';
 
 // ─── Global registration (for script-tag / CDN usage) ──────────────────────
 

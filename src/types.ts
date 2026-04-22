@@ -62,14 +62,15 @@ export interface RobotToastOptions {
   typeSpeed?: number;
 
   /**
-   * Robot image to display.
-   * - Built-in: 'wave', 'error', 'success', 'base', 'base2', 'angry', 'angry2', 'shock',
-   *   'think', 'search', 'loading', 'sleep', 'head-palm', 'type', 'validation', 'validation2'
-   *   (these use embedded data URLs, no external files needed)
-   * - Custom: any path accessible in your app (e.g., 'dxd/bird.jpg', 'public/my-robot.svg')
-   * - None: 'none' to hide the robot entirely
-   * Accepted formats for custom images: svg, png, jpg, jpeg, gif, webp.
-   * Anything unrecognized falls back to the built-in robot.
+   * Robot image source. Opt-in — nothing is shown unless you ask for one.
+   * Pass one of:
+   * - Omit (or pass `undefined` / `''` / `'none'`) to hide the robot entirely.
+   * - `'default'` to render the built-in inline SVG (no network fetch).
+   * - A data URL from `robot-toast/robots` (tree-shakeable, recommended):
+   *     import { wave } from 'robot-toast/robots';
+   *     toast({ message: 'Hi', robotVariant: wave });
+   * - A path to an image file (svg/png/jpg/jpeg/gif/webp).
+   * Unrecognized values are treated as "hidden" rather than rendered.
    */
   robotVariant?: string;
 

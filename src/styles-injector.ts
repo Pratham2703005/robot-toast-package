@@ -38,6 +38,10 @@ class InjectStyles {
   opacity: 0;
   z-index: 99999;
   pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .robot-toast-wrapper.robot-toast-visible {
