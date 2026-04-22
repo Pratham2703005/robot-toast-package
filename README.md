@@ -1,24 +1,11 @@
 # 🤖 robot-toast
 
-A lightweight, zero-dependency, framework-agnostic toast notification library featuring an animated robot companion. Fully draggable with edge-snapping, typewriter-style messages, multiple themes, rich transitions, a tree-shakeable cast of **16 built-in robots** — and now an optional React hook.
+Lightweight toast notifications with an animated robot companion. 16 tree-shakeable robots, fully draggable, multiple themes, and optional React hook.
 
 <p align="left">
-  <a href="https://stackblitz.com/your-demo-link"
-     style="color:#e53935; font-weight:600; text-decoration:none;">
-    Demo
-  </a>
+  <a href="https://robot-toast-client.vercel.app/" style="color:#e53935; font-weight:600; text-decoration:none;">Demo & Playground →</a>
 </p>
-<p align="center">
-  <a href="https://pratham-potfolio.vercel.app/" target="_blank">
-    <img src="https://img.shields.io/badge/Portfolio-000?style=for-the-badge&logo=vercel&logoColor=white" />
-  </a>
-  <a href="https://www.linkedin.com/in/pratham-kumar-a6b672275/" target="_blank">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
-  </a>
-  <a href="https://github.com/Pratham2703005" target="_blank">
-    <img src="https://img.shields.io/badge/GitHub-000?style=for-the-badge&logo=github&logoColor=white" />
-  </a>
-</p>
+
 <p align="center">
   <a href="https://www.npmjs.com/package/robot-toast">
     <img src="https://img.shields.io/npm/v/robot-toast?style=flat-square" />
@@ -27,55 +14,9 @@ A lightweight, zero-dependency, framework-agnostic toast notification library fe
   <img src="https://img.shields.io/bundlephobia/minzip/robot-toast?style=flat-square" />
 </p>
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/Pratham2703005/robot-toast/refs/heads/main/public/offiicial-page/lightmode.png" alt="Light mode" width="320" />
-  <img src="https://raw.githubusercontent.com/Pratham2703005/robot-toast/refs/heads/main/public/offiicial-page/darkmode.png" alt="Dark mode" width="320" />
-  <img src="https://raw.githubusercontent.com/Pratham2703005/robot-toast/refs/heads/main/public/offiicial-page/custom.png" alt="Custom styled" width="320" />
-</p>
+> **[GIF/video of robot in action]** ← [Add robot demo GIF here]
 
----
-
-## What's new in v2
-
-- **36% smaller core bundle** (61 KB → 39 KB). Robots moved to a tree-shakeable subpath — only the ones you import end up in your bundle.
-- **Opt-in robots.** Omitting `robotVariant` renders *no robot* now. Pass `'default'` or import from `robot-toast/robots` to bring one back.
-- **Inline buttons.** Pass a `buttons` array for Undo / Retry / Cancel-style inline CTAs — rendered in array order, optional `className` per button for custom visual hierarchy.
-- **`toast.promise()`** — attach loading/success/error toasts to any promise.
-- **React subpath.** `useRobotToast()` + `useToastOnMount()` as optional ergonomic bindings.
-- **ARIA roles.** `role="alert"` for `error`/`warning`, `role="status"` elsewhere, plus `aria-atomic` and a labeled close button.
-
-Upgrading from v1? See [MIGRATION.md](./MIGRATION.md) for the five-minute changeover.
-
----
-
-## Features
-
-| Category | Details |
-|---|---|
-| **Themes** | `light` · `dark` · `colored` |
-| **Types** | `default` · `info` · `success` · `warning` · `error` |
-| **Transitions** | `bounce` · `flip` · `zoom` · `slide` |
-| **Positions** | `top-left` · `top-center` · `top-right` · `bottom-left` · `bottom-center` · `bottom-right` |
-| **Robots** | 16 tree-shakeable built-ins — import what you use, pass any image path (svg, png, jpg, gif, webp), or skip the robot entirely |
-| **Custom styles** | Pass a `style` object to customize the message bubble however you like |
-| **Drag & drop** | Full XY drag with viewport clamping; snaps to the nearest screen edge on release |
-| **Typewriter effect** | Characters appear one by one — configurable speed or instant |
-| **Multi-toast** | Configurable `limit` for simultaneous toasts; excess is auto-queued |
-| **Progress bar** | Countdown bar — show or hide it |
-| **Pause on hover** | Timer pauses when you hover over the toast |
-| **Pause on focus loss** | Timer pauses when the browser tab loses focus |
-| **Promise helper** | `toast.promise(p, { loading, success, error })` |
-| **React hook** | `useRobotToast()` + `useToastOnMount()` from `robot-toast/react` |
-| **RTL** | Right-to-left layout support |
-| **Newest on top** | Stack new toasts above existing ones |
-| **Auto-close** | Configurable duration, or disable entirely |
-| **Accessibility** | `role="alert"` / `role="status"`, `aria-live`, `aria-atomic`, labeled dismiss button |
-| **SSR-safe** | All DOM access is guarded — safe for Next.js, Nuxt, etc. |
-| **Zero dependencies** | Pure TypeScript — ESM + CJS builds, tree-shakeable |
-
----
-
-## Installation
+## Install
 
 ```bash
 npm install robot-toast
@@ -85,227 +26,81 @@ npm install robot-toast
 
 ```ts
 import { toast } from 'robot-toast';
+import { wave } from 'robot-toast/robots';
 
-// Simple string — no robot by default in v2
-toast('Hello 🤖');
-
-// With options
-toast({
-  message: 'Operation successful!',
-  type: 'success',
-  theme: 'dark',
-  position: 'top-right',
-});
+toast({ message: 'Hello! 🤖', robotVariant: wave });
+toast.success('Operation successful!');
+toast.error('Something went wrong');
 ```
 
-### Add a robot
+**Explore all features & interactive demos →** [Full Playground](https://robot-toast-client.vercel.app/features)
 
-Robots are opt-in. Import the one you want from the `robot-toast/robots` subpath — bundlers only include what you import:
+## Features at a Glance
+
+| Robots | Layout | Styling | Behavior |
+|--------|--------|---------|----------|
+| 16 built-in variants | 6 position options | 3 themes | Fully draggable |
+| Tree-shakeable imports | Auto-queuing | Custom inline styles | Typewriter effect |
+| Custom images (SVG/PNG) | Progress bar | Transitions (4 types) | Promise helpers |
+| | | | React hook included |
+
+---
+
+## Full API Reference
+
+### Basic Usage
 
 ```ts
 import { toast } from 'robot-toast';
 import { wave, success, error } from 'robot-toast/robots';
 
-toast({ message: 'Hi!',       robotVariant: wave });
-toast({ message: 'Saved!',    robotVariant: success, type: 'success' });
-toast({ message: 'Failed',    robotVariant: error,   type: 'error'   });
+toast('Simple notification');
+toast({ message: 'With options', type: 'success', robotVariant: wave });
+toast.success('Shorthand');
 ```
 
-Prefer the built-in inline SVG with no extra import?
-
-```ts
-toast({ message: 'Hello', robotVariant: 'default' });
-```
-
-## Inline buttons
-
-Add inline buttons for patterns like Undo, Retry, or Confirm / Cancel. They render in array order — the caller controls the visual hierarchy:
-
-```ts
-// Undo pattern — one button
-toast({
-  message: 'File deleted',
-  buttons: [
-    { label: 'Undo', onClick: () => restoreFile() },
-  ],
-});
-
-// Confirm + cancel — cancel on the left, primary CTA on the right
-toast({
-  message: 'Send this email to 1,200 people?',
-  buttons: [
-    { label: 'Cancel', onClick: () => abort() },
-    { label: 'Send',   onClick: () => send(), className: 'my-primary' },
-  ],
-});
-```
-
-Clicking any button fires its `onClick` and then closes the toast automatically. A callback that throws is logged and the toast still closes, so a bad handler can't strand the toast on screen.
-
-All buttons get a neutral outline style by default. Two ways to customize:
-
-- **`className`** — appends one or more class names to the button. Use when you have a stylesheet rule already defined (e.g. `.my-primary { background: black; color: white }`) or when using a utility framework like Tailwind.
-- **`style`** — inline CSS as a key/value object. Use for one-off styling without touching your stylesheet:
+### All Options
 
 ```ts
 toast({
-  message: 'Send this email to 1,200 people?',
-  buttons: [
-    { label: 'Cancel', onClick: () => abort() },
-    {
-      label: 'Send',
-      onClick: () => send(),
-      style: { background: 'black', color: 'white' },
-    },
-  ],
+  // Content
+  message: 'Notification text',
+  
+  // Appearance
+  type: 'default' | 'info' | 'success' | 'warning' | 'error',
+  theme: 'light' | 'dark' | 'colored',
+  transition: 'bounce' | 'flip' | 'zoom' | 'slide',
+  position: 'top-left' | 'top-center' | 'top-right' | 
+            'bottom-left' | 'bottom-center' | 'bottom-right',
+  
+  // Robot & Styling
+  robotVariant: wave | base | success | error | '...' | 'default' | '/path.svg',
+  nearScreen: true,
+  style: { background: '...', color: '...' },
+  
+  // Timing & Behavior
+  autoClose: 5000 | false,
+  typeSpeed: 30,
+  hideProgressBar: false,
+  draggable: true,
+  pauseOnHover: true,
+  pauseOnFocusLoss: true,
+  rtl: false,
+  
+  // Multi-toast
+  limit: 0,
+  newestOnTop: false,
+  
+  // Buttons & Callbacks
+  buttons: [{ label: 'Undo', onClick: () => {...} }],
+  onOpen: () => {...},
+  onClose: () => {...},
 });
 ```
 
-Inline `style` takes precedence over both `className`-driven rules and the default solo-CTA / outline styles. Kebab-case keys (`'border-radius'`) and camelCase keys (`borderRadius`) both work.
+### Built-in Robots
 
-## Promise lifecycle
-
-```ts
-toast.promise(fetch('/api/save').then(r => r.json()), {
-  loading: 'Saving…',
-  success: (data) => `Saved as ${data.name}`,
-  error:   (err)  => `Failed: ${err.message}`,
-});
-```
-
-The `success` and `error` fields accept a string, a function of the resolved/rejected value, or a partial options object. The original promise's resolution value passes through unchanged — `await toast.promise(...)` still gives you the data.
-
-## React bindings
-
-```tsx
-import { useRobotToast, useToastOnMount } from 'robot-toast/react';
-
-function SaveButton() {
-  const toast = useRobotToast();
-  return <button onClick={() => toast.success('Saved!')}>Save</button>;
-}
-
-function LoadingBanner() {
-  // Fires on mount, auto-closes on unmount
-  useToastOnMount({ message: 'Fetching…', autoClose: false });
-  return null;
-}
-```
-
-React is an **optional** peer dependency — non-React users aren't affected.
-
-## Close Programmatically
-
-```ts
-// Close a specific toast by id
-const id = toast('Working…');
-toast.closeById(id);
-
-// Close all toasts at once
-toast.closeAll();
-```
-
----
-## All Options at a Glance
-
-A single `toast()` call using **every available option** so you can see the full API in one place:
-
-```ts
-import { toast } from 'robot-toast';
-import { wave } from 'robot-toast/robots';
-
-toast({
-  // ─── Content ───────────────────────────────────────────
-  message: 'This is the full kitchen-sink example!',
-
-  // ─── Appearance ────────────────────────────────────────
-  type: 'success',                // 'default' | 'info' | 'success' | 'warning' | 'error'
-  theme: 'dark',                  // 'light' | 'dark' | 'colored'
-  transition: 'bounce',           // 'bounce' | 'flip' | 'zoom' | 'slide'
-  position: 'bottom-right',       // 'top-left' | 'top-center' | 'top-right'
-                                  // 'bottom-left' | 'bottom-center' | 'bottom-right'
-
-  // ─── Robot ─────────────────────────────────────────────
-  // Omit (or '' / 'none') to hide. Use 'default' for the inline built-in SVG.
-  // For a built-in variant, import from 'robot-toast/robots' and pass the value.
-  // Custom image: pass any path with svg/png/jpg/jpeg/gif/webp extension.
-  robotVariant: wave,
-  nearScreen:   true,             // true = robot near screen edge, false = inner side
-
-  // ─── Timing ────────────────────────────────────────────
-  autoClose: 5000,                // milliseconds, or false to disable auto-close
-  typeSpeed: 30,                  // ms per character (0 = instant, no typing effect)
-
-  // ─── Behaviour ─────────────────────────────────────────
-  hideProgressBar:  false,        // true to hide the countdown bar
-  draggable:        true,         // allow drag & drop; snaps to nearest edge on release
-  pauseOnHover:     true,         // pause countdown on mouse hover
-  pauseOnFocusLoss: true,         // pause countdown when tab loses focus
-  rtl:              false,        // right-to-left layout
-
-  // ─── Multi-toast ───────────────────────────────────────
-  limit:       0,                 // max visible toasts (0 = unlimited, excess is queued)
-  newestOnTop: false,             // stack new toasts above older ones
-
-  // ─── Custom Inline Styles ─────────────────────────────
-  style: {
-    background:   'linear-gradient(135deg, #667eea, #764ba2)',
-    color:        '#fff',
-    borderRadius: '16px',
-    fontFamily:   'monospace',
-  },
-
-  // ─── Callbacks ─────────────────────────────────────────
-  onOpen:  () => console.log('Toast appeared!'),
-  onClose: () => console.log('Toast dismissed!'),
-});
-```
-
-### Type Shorthands
-
-```ts
-// These set the `type` automatically — you can also pass a full options object
-toast.success('Saved!');
-toast.error('Something went wrong');
-toast.info('Did you know…');
-toast.warning('Check your input');
-
-// With additional options
-import { success } from 'robot-toast/robots';
-toast.success({ message: 'Deployed!', theme: 'colored', position: 'top-center', robotVariant: success });
-```
-
----
-## Options
-
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `message` | `string` | *required* | The text to display |
-| `autoClose` | `number \| false` | `5000` | Auto-close after ms. `false` = stays until dismissed |
-| `position` | `string` | `'bottom-right'` | One of the 6 position presets (see above) |
-| `type` | `string` | `'default'` | `default` · `info` · `success` · `warning` · `error` |
-| `theme` | `string` | `'light'` | `light` · `dark` · `colored` |
-| `transition` | `string` | `'bounce'` | `bounce` · `flip` · `zoom` · `slide` |
-| `style` | `Record<string, string \| number>` | — | Inline styles applied directly to the message bubble |
-| `typeSpeed` | `number` | `30` | Typing speed in ms per character. `0` = instant |
-| `robotVariant` | `string` | *hidden* | Data URL from `robot-toast/robots`, `'default'` for built-in SVG, image path, or omit for no robot |
-| `hideProgressBar` | `boolean` | `false` | Hide the countdown progress bar |
-| `draggable` | `boolean` | `true` | Allow the user to drag the toast; snaps to the nearest edge on release |
-| `nearScreen` | `boolean` | `true` | `true` = robot near screen edge; `false` = robot on the inner side |
-| `pauseOnHover` | `boolean` | `true` | Pause countdown while the cursor is over the toast |
-| `pauseOnFocusLoss` | `boolean` | `true` | Pause countdown when the browser tab loses focus |
-| `rtl` | `boolean` | `false` | Right-to-left layout |
-| `limit` | `number` | `0` | Max toasts visible at once. `0` = unlimited. Excess is queued |
-| `newestOnTop` | `boolean` | `false` | Stack newest toasts above older ones |
-| `buttons` | `Array<{ label: string; onClick: (e: MouseEvent) => void; className?: string; style?: Record<string, string \| number> }>` | — | Inline buttons rendered in array order. Each click fires `onClick` then closes the toast. Use `className` for stylesheet classes, `style` for inline CSS. |
-| `onOpen` | `() => void` | — | Callback fired when the toast finishes its entrance |
-| `onClose` | `() => void` | — | Callback fired after the toast fully exits |
-
----
-
-## Built-in Robots
-
-All 16 robots are importable from `robot-toast/robots`. Each is a pre-encoded data URL — no network fetch, no external files, and bundlers drop the ones you don't use:
+Import any of the 16 built-in robots from `robot-toast/robots`:
 
 ```ts
 import {
@@ -314,117 +109,103 @@ import {
   loading, sleep, headPalm, typing,
   validation, validation2,
 } from 'robot-toast/robots';
-```
 
-> v1 → v2 renames: `head-palm` → `headPalm`, `type` → `typing` (the dash isn't a valid identifier; `type` clashes with TypeScript's type-only import syntax).
-
-For guaranteed per-variant tree-shaking, you can also import from the direct subpath:
-
-```ts
+// Or import directly for guaranteed tree-shaking:
 import { wave } from 'robot-toast/robots/wave';
 ```
 
-### Custom Robot Image
+Custom images are supported: pass any SVG/PNG/JPG/GIF/WebP path to `robotVariant`.
 
-Point to any image accessible in your app:
+### Inline Buttons
+
+Add undo/confirm/cancel style buttons to toasts:
 
 ```ts
 toast({
-  message: 'Custom bot!',
-  robotVariant: '/images/my-robot.png',
+  message: 'File deleted',
+  buttons: [
+    { label: 'Undo', onClick: () => restoreFile() },
+    { label: 'Keep', onClick: () => {}, style: { color: 'gray' } },
+  ],
 });
 ```
 
-Supported formats: **svg, png, jpg, jpeg, gif, webp**. Failed loads fall back to the built-in default SVG. Omit `robotVariant` (or pass `''` / `'none'`) to hide the robot entirely.
+### Promise Lifecycle
 
----
-
-## Themes & Custom Styles
-
-### Built-in Themes
+Attach loading/success/error messages to any promise:
 
 ```ts
-toast({ message: 'Light mode',  theme: 'light' });
-toast({ message: 'Dark mode',   theme: 'dark' });
-toast({ message: 'Colored',     theme: 'colored', type: 'success' });
+toast.promise(fetch('/api/save').then(r => r.json()), {
+  loading: 'Saving…',
+  success: (data) => `Saved as ${data.name}`,
+  error: (err) => `Failed: ${err.message}`,
+});
 ```
 
-### Custom Inline Styles
+### React Bindings
 
-Use the `style` option to fully customize the message bubble:
+```tsx
+import { useRobotToast, useToastOnMount } from 'robot-toast/react';
+
+function App() {
+  const toast = useRobotToast();
+  return <button onClick={() => toast.success('Saved!')}>Save</button>;
+}
+
+function InitBanner() {
+  useToastOnMount({ message: 'Welcome!', autoClose: false });
+  return null;
+}
+```
+
+### Programmatic Control
 
 ```ts
-toast({
-  message: 'Fully custom look',
+const id = toast('Working…');
+toast.closeById(id);
+toast.closeAll();
+```
+
+### Themes & Custom Styles
+
+```ts
+toast({ message: 'Light', theme: 'light' });
+toast({ message: 'Dark', theme: 'dark' });
+toast({ 
+  message: 'Custom gradient',
   style: {
-    background:   'linear-gradient(135deg, #667eea, #764ba2)',
-    color:        '#fff',
+    background: 'linear-gradient(135deg, #667eea, #764ba2)',
+    color: '#fff',
     borderRadius: '16px',
-    fontFamily:   'monospace',
   },
 });
 ```
 
----
+### Accessibility
 
-## Transitions
+- `error` / `warning` toasts: `role="alert"` + `aria-live="assertive"`
+- Other types: `role="status"` + `aria-live="polite"`
+- `aria-atomic="true"` ensures full message re-announcement
+- Labeled close button for screen readers
 
-```ts
-toast({ message: 'Bounce!', transition: 'bounce' });
-toast({ message: 'Flip!',   transition: 'flip'   });
-toast({ message: 'Zoom!',   transition: 'zoom'   });
-toast({ message: 'Slide!',  transition: 'slide'  });
-```
+### Framework Examples
 
----
-
-## Drag & responsive layout
-
-When `draggable` is on (default):
-
-- **Drag anywhere** on the toast to move it. On release it snaps to the nearest horizontal edge — including when you drag all the way across the screen.
-- `touch-action: none` prevents the browser from fighting the drag, and rect dimensions are cached on pointerdown to eliminate layout-thrash jank on low-end devices.
-- Use the **close button**, an **action button**, or `toast.closeById()` / `toast.closeAll()` to dismiss programmatically.
-
-**On viewports ≤ 600 px** the toast shrinks slightly (tighter gutters, smaller robot, smaller font) but keeps its configured position preset. Drag still works everywhere.
-
----
-
-## Accessibility
-
-Every toast ships with the right ARIA hooks out of the box:
-
-- `error` and `warning` toasts get `role="alert"` + `aria-live="assertive"` — screen readers announce them immediately.
-- All other types get `role="status"` + `aria-live="polite"` — announced when the user is idle.
-- `aria-atomic="true"` ensures the full message is re-announced on updates.
-- The close button has `type="button"` + `aria-label="Dismiss notification"`.
-
----
-
-## Framework Examples
-
-### React / Next.js
-
+**React / Next.js**
 ```tsx
 'use client';
 import { useRobotToast } from 'robot-toast/react';
 import { wave } from 'robot-toast/robots';
-import { useEffect } from 'react';
 
 export default function App() {
   const toast = useRobotToast();
-
-  useEffect(() => {
-    toast({
-      message: 'Welcome!',
-      type: 'success',
-      theme: 'dark',
-      position: 'top-right',
-      robotVariant: wave,
-      transition: 'bounce',
-    });
-  }, [toast]);
-
-  return <div>My App</div>;
+  
+  return (
+    <button onClick={() => toast.success({ 
+      message: 'Deployed!', 
+      robotVariant: wave 
+    })}>
+      Deploy
+    </button>
+  );
 }
 ```
