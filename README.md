@@ -7,7 +7,19 @@ Lightweight toast notifications with complete control.
 robot-toast gives you a canvas, not a prescription — bring your own robot, colors, buttons, and timing. 16 tree-shakeable robots, fully draggable, zero dependencies.
 
 <p align="left">
-  <a href="https://robot-toast-client.vercel.app/" style="color:#e53935; font-weight:600; text-decoration:none;">Demo & Playground →</a>
+  <a href="https://robot-toast.vercel.app/" style="color:#e53935; font-weight:600; text-decoration:none;">Demo & Playground →</a>
+</p>
+
+<p align="center">
+  <a href="https://pratham-potfolio.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/Portfolio-000?style=for-the-badge&logo=vercel&logoColor=white" />
+  </a>
+  <a href="https://www.linkedin.com/in/pratham-kumar-a6b672275/" target="_blank">
+    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
+  </a>
+  <a href="https://github.com/Pratham2703005" target="_blank">
+    <img src="https://img.shields.io/badge/GitHub-000?style=for-the-badge&logo=github&logoColor=white" />
+  </a>
 </p>
 
 <p align="center">
@@ -21,8 +33,6 @@ robot-toast gives you a canvas, not a prescription — bring your own robot, col
 ## 🤖 Built-in Robots
 
 ![Built-in Robots](https://raw.githubusercontent.com/Pratham2703005/robot-toast/refs/heads/main/public/offiicial-page/robots.png)
-
-[**See them animated in the playground →**](https://robot-toast-client.vercel.app/features)
 
 ## 🎨 Features in Action
 
