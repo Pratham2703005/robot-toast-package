@@ -266,6 +266,8 @@ class InjectStyles {
   background: none;
   border: none;
   font-size: 24px;
+  line-height: 1;
+  font-family: Arial, sans-serif;
   cursor: pointer;
   opacity: 0.6;
   transition: opacity 0.2s;
