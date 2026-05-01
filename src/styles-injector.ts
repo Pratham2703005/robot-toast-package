@@ -170,6 +170,13 @@ class InjectStyles {
   user-select: none;
   cursor: default;
   box-sizing: border-box;
+  /*
+   * Clip children to the rounded border so the progress bar's straight edges
+   * follow whatever border-radius the user sets via the style option.
+   * Without this, a high border-radius leaves the progress bar's bottom
+   * corners poking out past the rounded message box.
+   */
+  overflow: hidden;
 }
 
 .robot-toast-message.robot-toast-empty {
@@ -260,28 +267,32 @@ class InjectStyles {
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 /*
- * Close button: 28x28 click target anchored at the message-box corner,
- * but the SVG icon is aligned to the TOP-RIGHT of that target (not centered).
- * Centering the SVG put the visible × ~14px from the corner, which on short
- * single-line toasts looked like it was "in the middle" of the toast. Aligning
- * to the corner with a small padding keeps the icon visually pinned to the
- * top-right regardless of toast height, while preserving a comfortable hit zone.
+ * Close button is absolutely positioned against the BODY section (not the
+ * whole message box), and vertically centered with top: 50% / translateY.
+ * This makes it pair with the text automatically:
+ *   - single-line toast  -> centered with the text line
+ *   - multi-line toast   -> centered with the text block
+ *   - toast with buttons -> stays in body region, never drifts into footer
+ *   - any font size / theme -> body grows, button follows
+ * The icon itself is an inline SVG so it renders identically across browsers
+ * (the &amp;times; glyph has unstable baselines on mobile font stacks).
  */
 .robot-toast-close {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 35%;
+  right: 2px;
+  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  opacity: 0.6;
+  opacity: 0.5;
   transition: opacity 0.2s;
   width: 28px;
   height: 28px;
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 6px 6px 0 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   box-sizing: border-box;
   color: currentColor;
   line-height: 0;
@@ -289,8 +300,8 @@ class InjectStyles {
 
 .robot-toast-close svg {
   display: block;
-  width: 12px;
-  height: 12px;
+  width: 9px;
+  height: 9px;
 }
 
 .robot-toast-close:hover {
@@ -326,6 +337,7 @@ class InjectStyles {
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
 .robot-toast-body {
+  position: relative;
   padding: 10px 40px 10px 14px;
 }
 
@@ -775,7 +787,7 @@ class InjectStyles {
   .robot-toast-close {
     width: 24px;
     height: 24px;
-    padding: 5px 5px 0 0;
+    right: -6px;
   }
   .robot-toast-close svg {
     width: 11px;

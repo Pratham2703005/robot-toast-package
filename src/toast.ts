@@ -303,9 +303,20 @@ class ToastItem {
     // optional pieces (footer, progress bar) can appear/disappear without
     // us having to juggle conditional margins anywhere else.
 
-    // Close button — absolute, top-right of the whole box (outside sections).
-    // Uses an inline SVG (not the &times; glyph) so the icon centers reliably
-    // across browsers / mobile font stacks where × has unpredictable baselines.
+    // Section 1 — body (message text). Always present.
+    // The close button lives INSIDE the body and is absolutely positioned
+    // against it, so it auto-aligns with the text vertically regardless of
+    // how tall the body grows (single-line, multi-line, larger font, etc.)
+    // and regardless of what optional sections (footer / progress) follow.
+    const body = document.createElement('div');
+    body.className = 'robot-toast-body';
+    const text = document.createElement('div');
+    text.className = 'robot-toast-text';
+    body.appendChild(text);
+
+    // Close button — absolute, vertically centered against the body section.
+    // SVG (not the &times; glyph) so the icon centers reliably across browsers
+    // and mobile font stacks where × has unpredictable baseline metrics.
     const closeBtn = document.createElement('button');
     closeBtn.className   = 'robot-toast-close';
     closeBtn.innerHTML   = '<svg viewBox="0 0 14 14" width="12" height="12" aria-hidden="true" focusable="false"><path d="M1 1 L13 13 M13 1 L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
@@ -313,14 +324,8 @@ class ToastItem {
     closeBtn.type        = 'button';
     closeBtn.setAttribute('aria-label', 'Dismiss notification');
     closeBtn.addEventListener('click', (e) => { e.stopPropagation(); this.close(); });
-    box.appendChild(closeBtn);
+    body.appendChild(closeBtn);
 
-    // Section 1 — body (message text). Always present.
-    const body = document.createElement('div');
-    body.className = 'robot-toast-body';
-    const text = document.createElement('div');
-    text.className = 'robot-toast-text';
-    body.appendChild(text);
     box.appendChild(body);
 
     // Section 2 — footer (button rows). Rendered only when buttons exist.
