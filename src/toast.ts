@@ -303,10 +303,12 @@ class ToastItem {
     // optional pieces (footer, progress bar) can appear/disappear without
     // us having to juggle conditional margins anywhere else.
 
-    // Close button — absolute, top-right of the whole box (outside sections)
+    // Close button — absolute, top-right of the whole box (outside sections).
+    // Uses an inline SVG (not the &times; glyph) so the icon centers reliably
+    // across browsers / mobile font stacks where × has unpredictable baselines.
     const closeBtn = document.createElement('button');
     closeBtn.className   = 'robot-toast-close';
-    closeBtn.innerHTML   = '&times;';
+    closeBtn.innerHTML   = '<svg viewBox="0 0 14 14" width="12" height="12" aria-hidden="true" focusable="false"><path d="M1 1 L13 13 M13 1 L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
     closeBtn.title       = 'Dismiss';
     closeBtn.type        = 'button';
     closeBtn.setAttribute('aria-label', 'Dismiss notification');

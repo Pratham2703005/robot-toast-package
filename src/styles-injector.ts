@@ -265,9 +265,6 @@ class InjectStyles {
   right: 4px;
   background: none;
   border: none;
-  font-size: 24px;
-  line-height: 1;
-  font-family: Arial, sans-serif;
   cursor: pointer;
   opacity: 0.6;
   transition: opacity 0.2s;
@@ -278,6 +275,13 @@ class InjectStyles {
   align-items: center;
   justify-content: center;
   color: currentColor;
+  line-height: 0;
+}
+
+.robot-toast-close svg {
+  display: block;
+  width: 12px;
+  height: 12px;
 }
 
 .robot-toast-close:hover {
@@ -762,7 +766,10 @@ class InjectStyles {
   .robot-toast-close {
     width: 24px;
     height: 24px;
-    font-size: 20px;
+  }
+  .robot-toast-close svg {
+    width: 11px;
+    height: 11px;
   }
 }
 
