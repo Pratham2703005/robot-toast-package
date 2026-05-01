@@ -259,21 +259,30 @@ class InjectStyles {
 /* CLOSE BUTTON */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
+/*
+ * Close button: 28x28 click target anchored at the message-box corner,
+ * but the SVG icon is aligned to the TOP-RIGHT of that target (not centered).
+ * Centering the SVG put the visible × ~14px from the corner, which on short
+ * single-line toasts looked like it was "in the middle" of the toast. Aligning
+ * to the corner with a small padding keeps the icon visually pinned to the
+ * top-right regardless of toast height, while preserving a comfortable hit zone.
+ */
 .robot-toast-close {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 0;
+  right: 0;
   background: none;
   border: none;
   cursor: pointer;
   opacity: 0.6;
   transition: opacity 0.2s;
-  padding: 0;
   width: 28px;
   height: 28px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 6px 6px 0 0;
+  box-sizing: border-box;
   color: currentColor;
   line-height: 0;
 }
@@ -766,6 +775,7 @@ class InjectStyles {
   .robot-toast-close {
     width: 24px;
     height: 24px;
+    padding: 5px 5px 0 0;
   }
   .robot-toast-close svg {
     width: 11px;
