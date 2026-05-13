@@ -48,8 +48,7 @@
     "./dist/react.mjs"
   ],
   "files": [
-    "dist",
-    "MIGRATION.md"
+    "dist"
   ],
   "scripts": {
     "build": "tsup",
