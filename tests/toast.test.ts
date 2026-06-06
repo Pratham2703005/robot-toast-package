@@ -615,6 +615,22 @@ describe("buttons", () => {
     expect(btns[1].className).toBe("robot-toast-btn");
   });
 
+  it("applies custom className to the toast message container", async () => {
+    const { toast } = await import("../src/index");
+    toast({
+      message: "x",
+      typeSpeed: 0,
+      autoClose: false,
+      className: "bg-emerald-600 text-white custom-merge-class",
+    });
+
+    const message = document.querySelector(".robot-toast-message")!;
+    expect(message.classList.contains("robot-toast-message")).toBe(true);
+    expect(message.classList.contains("bg-emerald-600")).toBe(true);
+    expect(message.classList.contains("text-white")).toBe(true);
+    expect(message.classList.contains("custom-merge-class")).toBe(true);
+  });
+
   it("applies inline `style` to the button element (camelCase + kebab keys)", async () => {
     const { toast } = await import("../src/index");
     toast({

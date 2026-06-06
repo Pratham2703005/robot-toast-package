@@ -119,6 +119,7 @@ toast({
   robotVariant: wave | base | success | error | '...' | 'default' | '/path.svg',
   nearScreen: true,
   style: { background: '...', color: '...' },
+  className: 'bg-emerald-600 text-white',
 
   // Timing & Behavior
   autoClose: 5000 | false,
