@@ -67,6 +67,7 @@ class ToastItem {
     type: NonNullable<RobotToastOptions['type']>;
     theme: NonNullable<RobotToastOptions['theme']>;
     style?: Record<string, string | number>;
+    className?: string;
     typeSpeed: number;
     robotVariant: string;
     hideProgressBar: boolean;
@@ -123,6 +124,7 @@ class ToastItem {
       type:             options.type             ?? 'default',
       theme:            options.theme            ?? 'light',
       style:            options.style,
+      className:        options.className,
       typeSpeed:        options.typeSpeed        ?? 30,
       robotVariant:     options.robotVariant     ?? '',
       hideProgressBar:  options.hideProgressBar  ?? false,
@@ -285,8 +287,13 @@ class ToastItem {
       'robot-toast-message',
       `robot-toast-type-${this.options.type}`,
       `robot-toast-theme-${this.options.theme}`,
-    ].filter(Boolean);
-    box.className = classes.join(' ');
+    ];
+    if (this.options.className) {
+      classes.push(...this.options.className.split(/\s+/).filter(Boolean));
+    }
+
+    const finalClasses = classes.filter(Boolean);
+    box.className = finalClasses.join(' ');
     box.style.cursor = this.options.draggable ? 'grab' : 'default';
 
     // Apply inline styles if provided (takes precedence over theme colors)

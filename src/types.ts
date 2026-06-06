@@ -98,6 +98,12 @@ export interface RobotToastOptions {
    */
   style?: Record<string, string | number>;
 
+  /**
+   * Optional CSS class(es) applied to the toast message container.
+   * Useful for Tailwind/utility class styling.
+   */
+  className?: string;
+
   /** Typing speed in ms per character. 0 = instant. Default: 30 */
   typeSpeed?: number;
 
