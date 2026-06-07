@@ -183,74 +183,74 @@ class InjectStyles {
   display: none;
 }
 
-.robot-toast-message.robot-toast-theme-light {
+.robot-toast-message:where(.robot-toast-theme-light) {
   background: #ffffff;
   color: #333333;
   border: 1px solid #e0e0e0;
 }
 
-.robot-toast-message.robot-toast-theme-dark {
+.robot-toast-message:where(.robot-toast-theme-dark) {
   background: #2d2d2d;
   color: #f0f0f0;
   border: 1px solid #444444;
 }
 
-.robot-toast-message.robot-toast-theme-colored {
+.robot-toast-message:where(.robot-toast-theme-colored) {
   color: #ffffff;
 }
 
 /* Type-specific colors for colored theme */
-.robot-toast-message.robot-toast-theme-colored.robot-toast-type-default {
+.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-default {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.robot-toast-message.robot-toast-theme-colored.robot-toast-type-info {
+.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-info {
   background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
 }
 
-.robot-toast-message.robot-toast-theme-colored.robot-toast-type-success {
+.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-success {
   background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
 }
 
-.robot-toast-message.robot-toast-theme-colored.robot-toast-type-warning {
+.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-warning {
   background: linear-gradient(135deg, #fb6e3b 0%, #f5a623 100%);
 }
 
-.robot-toast-message.robot-toast-theme-colored.robot-toast-type-error {
+.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-error {
   background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
 }
 
 /* Light theme type-specific colors */
-.robot-toast-message.robot-toast-theme-light.robot-toast-type-info {
+.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-info {
   border-left: 4px solid #2193b0;
 }
 
-.robot-toast-message.robot-toast-theme-light.robot-toast-type-success {
+.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-success {
   border-left: 4px solid #11998e;
 }
 
-.robot-toast-message.robot-toast-theme-light.robot-toast-type-warning {
+.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-warning {
   border-left: 4px solid #fb6e3b;
 }
 
-.robot-toast-message.robot-toast-theme-light.robot-toast-type-error {
+.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-error {
   border-left: 4px solid #eb3349;
 }
 
 /* Dark theme type-specific colors */
-.robot-toast-message.robot-toast-theme-dark.robot-toast-type-info {
+.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-info {
   border-left: 4px solid #6dd5ed;
 }
 
-.robot-toast-message.robot-toast-theme-dark.robot-toast-type-success {
+.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-success {
   border-left: 4px solid #38ef7d;
 }
 
-.robot-toast-message.robot-toast-theme-dark.robot-toast-type-warning {
+.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-warning {
   border-left: 4px solid #f5a623;
 }
 
-.robot-toast-message.robot-toast-theme-dark.robot-toast-type-error {
+.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-error {
   border-left: 4px solid #f45c43;
 }
 
@@ -437,40 +437,40 @@ class InjectStyles {
 }
 
 /* Dark theme — inverted neutral */
-.robot-toast-message.robot-toast-theme-dark .robot-toast-btn {
+.robot-toast-message:where(.robot-toast-theme-dark) .robot-toast-btn {
   color: #a1a1aa;
   border-color: #3f3f46;
 }
-.robot-toast-message.robot-toast-theme-dark .robot-toast-btn:hover {
+.robot-toast-message:where(.robot-toast-theme-dark) .robot-toast-btn:hover {
   background: #27272a;
   color: #fafafa;
 }
-.robot-toast-message.robot-toast-theme-dark .robot-toast-row[data-count="1"]:only-child .robot-toast-btn {
+.robot-toast-message:where(.robot-toast-theme-dark) .robot-toast-row[data-count="1"]:only-child .robot-toast-btn {
   background: #fafafa;
   color: #18181b;
   border-color: #fafafa;
 }
-.robot-toast-message.robot-toast-theme-dark .robot-toast-row[data-count="1"]:only-child .robot-toast-btn:hover {
+.robot-toast-message:where(.robot-toast-theme-dark) .robot-toast-row[data-count="1"]:only-child .robot-toast-btn:hover {
   background: #e4e4e7;
   border-color: #e4e4e7;
   color: #18181b;
 }
 
 /* Colored theme — translucent whites keep contrast on any gradient */
-.robot-toast-message.robot-toast-theme-colored .robot-toast-btn {
+.robot-toast-message:where(.robot-toast-theme-colored) .robot-toast-btn {
   color: rgba(255, 255, 255, 0.9);
   border-color: rgba(255, 255, 255, 0.35);
 }
-.robot-toast-message.robot-toast-theme-colored .robot-toast-btn:hover {
+.robot-toast-message:where(.robot-toast-theme-colored) .robot-toast-btn:hover {
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
 }
-.robot-toast-message.robot-toast-theme-colored .robot-toast-row[data-count="1"]:only-child .robot-toast-btn {
+.robot-toast-message:where(.robot-toast-theme-colored) .robot-toast-row[data-count="1"]:only-child .robot-toast-btn {
   background: rgba(255, 255, 255, 0.95);
   color: #18181b;
   border-color: transparent;
 }
-.robot-toast-message.robot-toast-theme-colored .robot-toast-row[data-count="1"]:only-child .robot-toast-btn:hover {
+.robot-toast-message:where(.robot-toast-theme-colored) .robot-toast-row[data-count="1"]:only-child .robot-toast-btn:hover {
   background: #fff;
   color: #18181b;
 }
@@ -487,7 +487,7 @@ class InjectStyles {
   overflow: hidden;
 }
 
-.robot-toast-message.robot-toast-theme-dark .robot-toast-progress-container {
+.robot-toast-message:where(.robot-toast-theme-dark) .robot-toast-progress-container {
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -498,16 +498,18 @@ class InjectStyles {
   transform: scaleX(1);  /* ← starts full */
 }
 
-.robot-toast-theme-light.robot-toast-type-success .robot-toast-progress-bar { background: #11998e; }
-.robot-toast-theme-light.robot-toast-type-error   .robot-toast-progress-bar { background: #eb3349; }
-.robot-toast-theme-light.robot-toast-type-warning .robot-toast-progress-bar { background: #fb6e3b; }
-.robot-toast-theme-light.robot-toast-type-info    .robot-toast-progress-bar { background: #2193b0; }
+.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-success .robot-toast-progress-bar { background: #11998e; }
+.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-error .robot-toast-progress-bar   { background: #eb3349; }
+.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-warning .robot-toast-progress-bar { background: #fb6e3b; }
+.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-info .robot-toast-progress-bar    { background: #2193b0; }
 
 /* Dark theme progress bar colors */
-.robot-toast-theme-dark.robot-toast-type-success .robot-toast-progress-bar { background: #38ef7d; }
-.robot-toast-theme-dark.robot-toast-type-error   .robot-toast-progress-bar { background: #f45c43; }
-.robot-toast-theme-dark.robot-toast-type-warning .robot-toast-progress-bar { background: #f5a623; }
-.robot-toast-theme-dark.robot-toast-type-info    .robot-toast-progress-bar { background: #6dd5ed; }
+.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-success .robot-toast-progress-bar { background: #38ef7d; }
+.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-error .robot-toast-progress-bar   { background: #f45c43; }
+.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-warning .robot-toast-progress-bar { background: #f5a623; }
+.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-info .robot-toast-progress-bar    { background: #6dd5ed; }
+.robot-toast-progress-bar:where(.robot-toast-message):where(.robot-toast-theme-dark).robot-toast-type-info,
+.robot-toast-progress-bar:where(.robot-toast-theme-dark).robot-toast-type-info    { background: #6dd5ed; }
 
 
 .robot-toast-progress-bar.robot-toast-progress-auto {
