@@ -135,6 +135,13 @@ describe("robot-toast", () => {
       output: { present: true },
       description: "message box rules are injected",
     },
+    {
+      input: {
+        pattern: /\.robot-toast-message:where\(\.robot-toast-theme-(?:light|dark|colored)\)/,
+      },
+      output: { present: true },
+      description: "theme selectors are wrapped with :where()",
+    },
   ];
 
   it.each(cssCases)("css: $description", async ({ input, output }) => {
