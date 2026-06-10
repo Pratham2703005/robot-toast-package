@@ -623,6 +623,13 @@ describe("buttons", () => {
   });
 
   it("applies custom className to the toast message container", async () => {
+    const utilityStyles = document.createElement("style");
+    utilityStyles.textContent = `
+      .bg-emerald-600 { background: rgb(5, 150, 105); }
+      .text-white { color: rgb(255, 255, 255); }
+    `;
+    document.head.appendChild(utilityStyles);
+
     const { toast } = await import("../src/index");
     toast({
       message: "x",
@@ -633,9 +640,30 @@ describe("buttons", () => {
 
     const message = document.querySelector(".robot-toast-message")!;
     expect(message.classList.contains("robot-toast-message")).toBe(true);
+    expect(message.classList.contains("robot-toast-custom-surface")).toBe(true);
     expect(message.classList.contains("bg-emerald-600")).toBe(true);
     expect(message.classList.contains("text-white")).toBe(true);
     expect(message.classList.contains("custom-merge-class")).toBe(true);
+    expect(getComputedStyle(message).backgroundColor).toBe("rgb(5, 150, 105)");
+    expect(getComputedStyle(message).color).toBe("rgb(255, 255, 255)");
+  });
+
+  it("lets inline surface styles bypass theme colors", async () => {
+    const { toast } = await import("../src/index");
+    toast({
+      message: "x",
+      typeSpeed: 0,
+      autoClose: false,
+      style: {
+        background: "rgb(17, 24, 39)",
+        color: "rgb(243, 244, 246)",
+      },
+    });
+
+    const message = document.querySelector(".robot-toast-message") as HTMLElement;
+    expect(message.classList.contains("robot-toast-custom-surface")).toBe(true);
+    expect(getComputedStyle(message).backgroundColor).toBe("rgb(17, 24, 39)");
+    expect(getComputedStyle(message).color).toBe("rgb(243, 244, 246)");
   });
 
   it("applies inline `style` to the button element (camelCase + kebab keys)", async () => {

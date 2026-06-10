@@ -283,11 +283,15 @@ class ToastItem {
 
   private buildMessageBox(): HTMLDivElement {
     const box = document.createElement('div');
+    const hasCustomSurfaceStyles = Boolean(this.options.className || this.options.style);
     const classes = [
       'robot-toast-message',
       `robot-toast-type-${this.options.type}`,
       `robot-toast-theme-${this.options.theme}`,
     ];
+    if (hasCustomSurfaceStyles) {
+      classes.push('robot-toast-custom-surface');
+    }
     if (this.options.className) {
       classes.push(...this.options.className.split(/\s+/).filter(Boolean));
     }
