@@ -183,40 +183,40 @@ class InjectStyles {
   display: none;
 }
 
-.robot-toast-message:where(.robot-toast-theme-light) {
+.robot-toast-message:where(.robot-toast-theme-light):not(.robot-toast-custom-surface) {
   background: #ffffff;
   color: #333333;
   border: 1px solid #e0e0e0;
 }
 
-.robot-toast-message:where(.robot-toast-theme-dark) {
+.robot-toast-message:where(.robot-toast-theme-dark):not(.robot-toast-custom-surface) {
   background: #2d2d2d;
   color: #f0f0f0;
   border: 1px solid #444444;
 }
 
-.robot-toast-message:where(.robot-toast-theme-colored) {
+.robot-toast-message:where(.robot-toast-theme-colored):not(.robot-toast-custom-surface) {
   color: #ffffff;
 }
 
 /* Type-specific colors for colored theme */
-.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-default {
+.robot-toast-message:where(.robot-toast-theme-colored):not(.robot-toast-custom-surface).robot-toast-type-default {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-info {
+.robot-toast-message:where(.robot-toast-theme-colored):not(.robot-toast-custom-surface).robot-toast-type-info {
   background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
 }
 
-.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-success {
+.robot-toast-message:where(.robot-toast-theme-colored):not(.robot-toast-custom-surface).robot-toast-type-success {
   background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
 }
 
-.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-warning {
+.robot-toast-message:where(.robot-toast-theme-colored):not(.robot-toast-custom-surface).robot-toast-type-warning {
   background: linear-gradient(135deg, #fb6e3b 0%, #f5a623 100%);
 }
 
-.robot-toast-message:where(.robot-toast-theme-colored).robot-toast-type-error {
+.robot-toast-message:where(.robot-toast-theme-colored):not(.robot-toast-custom-surface).robot-toast-type-error {
   background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
 }
 
