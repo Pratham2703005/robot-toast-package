@@ -79,12 +79,12 @@ toast.error("Something went wrong");
 
 ## Features at a Glance
 
-| Robots                  | Layout             | Styling               | Behavior              |
-| ----------------------- | ------------------ | --------------------- | --------------------- |
-| 16 built-in variants    | 6 position options | 3 themes              | Fully draggable       |
-| Tree-shakeable imports  | Auto-queuing       | Custom inline styles  | Typewriter effect     |
-| Custom images (SVG/PNG) | Progress bar       | Transitions (4 types) | Promise helpers       |
-| Custom image paths      | Multi-toast queue  | CSS overrides         | React hook included   |
+| Robots                  | Layout             | Styling                        | Behavior              |
+| ----------------------- | ------------------ | ------------------------------ | --------------------- |
+| 16 built-in variants    | 6 position options | 3 themes                       | Fully draggable       |
+| Tree-shakeable imports  | Auto-queuing       | Custom inline styles           | Typewriter effect     |
+| Custom images (SVG/PNG) | Progress bar       | Tailwind-friendly `className`  | Promise helpers       |
+| Custom image paths      | Multi-toast queue  | CSS overrides                  | React hook included   |
 
 ---
 
@@ -118,6 +118,7 @@ toast({
   // Robot & Styling
   robotVariant: wave | base | success | error | '...' | 'default' | '/path.svg',
   nearScreen: true,
+  className: 'bg-emerald-600 text-white rounded-2xl shadow-lg',
   style: { background: '...', color: '...' },
   className: 'bg-emerald-600 text-white',
 
@@ -253,6 +254,29 @@ toast({
   },
 });
 ```
+
+### Tailwind and `className`
+
+`className` is applied to the toast message container, so you can use your own
+utility classes for surface styling without replacing the toast layout,
+animation, buttons, or progress behavior.
+
+When your `className` or inline `style` sets surface properties such as
+`background` or `color`, those user-defined values win over the built-in theme
+surface colors. That makes utilities like `bg-*`, `text-*`, `rounded-*`, and
+`shadow-*` work predictably.
+
+```tsx
+toast({
+  message: "Build finished",
+  theme: "dark",
+  className:
+    "bg-slate-950 text-slate-50 rounded-2xl border border-slate-700 shadow-2xl",
+});
+```
+
+Use `className` when your app stylesheet or Tailwind tokens should drive the
+toast appearance, and use `style` when you need runtime-calculated values.
 
 ### Accessibility
 
