@@ -149,7 +149,7 @@ class InjectStyles {
 /* MESSAGE BOX - Toast content container */
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 
-.robot-toast-message {
+:where(.robot-toast-message) {
   position: relative;
   width: fit-content;
   min-width: 120px;
@@ -221,36 +221,36 @@ class InjectStyles {
 }
 
 /* Light theme type-specific colors */
-.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-info {
+.robot-toast-message:where(.robot-toast-theme-light):not(.robot-toast-custom-surface).robot-toast-type-info {
   border-left: 4px solid #2193b0;
 }
 
-.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-success {
+.robot-toast-message:where(.robot-toast-theme-light):not(.robot-toast-custom-surface).robot-toast-type-success {
   border-left: 4px solid #11998e;
 }
 
-.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-warning {
+.robot-toast-message:where(.robot-toast-theme-light):not(.robot-toast-custom-surface).robot-toast-type-warning {
   border-left: 4px solid #fb6e3b;
 }
 
-.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-error {
+.robot-toast-message:where(.robot-toast-theme-light):not(.robot-toast-custom-surface).robot-toast-type-error {
   border-left: 4px solid #eb3349;
 }
 
 /* Dark theme type-specific colors */
-.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-info {
+.robot-toast-message:where(.robot-toast-theme-dark):not(.robot-toast-custom-surface).robot-toast-type-info {
   border-left: 4px solid #6dd5ed;
 }
 
-.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-success {
+.robot-toast-message:where(.robot-toast-theme-dark):not(.robot-toast-custom-surface).robot-toast-type-success {
   border-left: 4px solid #38ef7d;
 }
 
-.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-warning {
+.robot-toast-message:where(.robot-toast-theme-dark):not(.robot-toast-custom-surface).robot-toast-type-warning {
   border-left: 4px solid #f5a623;
 }
 
-.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-error {
+.robot-toast-message:where(.robot-toast-theme-dark):not(.robot-toast-custom-surface).robot-toast-type-error {
   border-left: 4px solid #f45c43;
 }
 
@@ -498,18 +498,17 @@ class InjectStyles {
   transform: scaleX(1);  /* ← starts full */
 }
 
-.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-success .robot-toast-progress-bar { background: #11998e; }
-.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-error .robot-toast-progress-bar   { background: #eb3349; }
-.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-warning .robot-toast-progress-bar { background: #fb6e3b; }
-.robot-toast-message:where(.robot-toast-theme-light).robot-toast-type-info .robot-toast-progress-bar    { background: #2193b0; }
+.robot-toast-message:where(.robot-toast-theme-light):not(.robot-toast-custom-surface).robot-toast-type-success .robot-toast-progress-bar { background: #11998e; }
+.robot-toast-message:where(.robot-toast-theme-light):not(.robot-toast-custom-surface).robot-toast-type-error .robot-toast-progress-bar   { background: #eb3349; }
+.robot-toast-message:where(.robot-toast-theme-light):not(.robot-toast-custom-surface).robot-toast-type-warning .robot-toast-progress-bar { background: #fb6e3b; }
+.robot-toast-message:where(.robot-toast-theme-light):not(.robot-toast-custom-surface).robot-toast-type-info .robot-toast-progress-bar    { background: #2193b0; }
 
 /* Dark theme progress bar colors */
-.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-success .robot-toast-progress-bar { background: #38ef7d; }
-.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-error .robot-toast-progress-bar   { background: #f45c43; }
-.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-warning .robot-toast-progress-bar { background: #f5a623; }
-.robot-toast-message:where(.robot-toast-theme-dark).robot-toast-type-info .robot-toast-progress-bar    { background: #6dd5ed; }
-.robot-toast-progress-bar:where(.robot-toast-message):where(.robot-toast-theme-dark).robot-toast-type-info,
-.robot-toast-progress-bar:where(.robot-toast-theme-dark).robot-toast-type-info    { background: #6dd5ed; }
+.robot-toast-message:where(.robot-toast-theme-dark):not(.robot-toast-custom-surface).robot-toast-type-success .robot-toast-progress-bar { background: #38ef7d; }
+.robot-toast-message:where(.robot-toast-theme-dark):not(.robot-toast-custom-surface).robot-toast-type-error .robot-toast-progress-bar   { background: #f45c43; }
+.robot-toast-message:where(.robot-toast-theme-dark):not(.robot-toast-custom-surface).robot-toast-type-warning .robot-toast-progress-bar { background: #f5a623; }
+.robot-toast-message:where(.robot-toast-theme-dark):not(.robot-toast-custom-surface).robot-toast-type-info .robot-toast-progress-bar    { background: #6dd5ed; }
+
 
 
 .robot-toast-progress-bar.robot-toast-progress-auto {

@@ -648,6 +648,50 @@ describe("buttons", () => {
     expect(getComputedStyle(message).color).toBe("rgb(255, 255, 255)");
   });
 
+  it("allows custom className to override type-specific left borders", async () => {
+    const utilityStyles = document.createElement("style");
+    utilityStyles.textContent = `
+      .border-l-8 { border-left-width: 8px; }
+      .border-red-500 { border-left-color: rgb(239, 58, 68); border-left-style: solid; }
+    `;
+    document.head.appendChild(utilityStyles);
+
+    const { toast } = await import("../src/index");
+    toast({
+      message: "x",
+      type: "success",
+      theme: "light",
+      className: "border-l-8 border-red-500",
+      typeSpeed: 0,
+      autoClose: false,
+    });
+
+    const message = document.querySelector(".robot-toast-message") as HTMLElement;
+    expect(getComputedStyle(message).borderLeftWidth).toBe("8px");
+    expect(getComputedStyle(message).borderLeftColor).toBe("rgb(239, 58, 68)");
+  });
+
+  it("allows custom className to override progress bar color", async () => {
+    const utilityStyles = document.createElement("style");
+    utilityStyles.textContent = `
+      .custom-progress .robot-toast-progress-bar { background: rgb(239, 58, 68); }
+    `;
+    document.head.appendChild(utilityStyles);
+
+    const { toast } = await import("../src/index");
+    toast({
+      message: "x",
+      type: "success",
+      theme: "light",
+      className: "custom-progress",
+      typeSpeed: 0,
+      autoClose: false,
+    });
+
+    const progressBar = document.querySelector(".robot-toast-progress-bar") as HTMLElement;
+    expect(getComputedStyle(progressBar).backgroundColor).toBe("rgb(239, 58, 68)");
+  });
+
   it("lets inline surface styles bypass theme colors", async () => {
     const { toast } = await import("../src/index");
     toast({
