@@ -1,4 +1,4 @@
-# 🤖 robot-toast
+# robot-toast
 
 ![robot-toast demo](https://raw.githubusercontent.com/Pratham2703005/robot-toast/refs/heads/main/public/offiicial-page/toasts.gif)
 
@@ -30,11 +30,11 @@ robot-toast gives you a canvas, not a prescription — bring your own robot, col
   <img src="https://img.shields.io/bundlephobia/minzip/robot-toast?style=flat-square" />
 </p>
 
-## 🤖 Built-in Robots
+## Built-in Robots
 
 ![Built-in Robots](https://raw.githubusercontent.com/Pratham2703005/robot-toast/refs/heads/main/public/offiicial-page/robots.png)
 
-## 🎨 Features in Action
+## Features in Action
 
 <table>
   <tr>
@@ -72,7 +72,7 @@ npm install robot-toast
 import { toast } from "robot-toast";
 import { wave } from "robot-toast/robots";
 
-toast({ message: "Hello! 🤖", robotVariant: wave });
+toast({ message: "Hello!", robotVariant: wave });
 toast.success("Operation successful!");
 toast.error("Something went wrong");
 ```
@@ -208,7 +208,7 @@ function CompleteExample() {
           theme: "dark",
         },
         success: {
-          message: "File uploaded! Ready to go? 🎉",
+          message: "File uploaded! Ready to go?",
           robotVariant: success,
           theme: "colored",
           style: { background: "#10b981", color: "white" },
