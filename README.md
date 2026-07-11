@@ -120,7 +120,6 @@ toast({
   nearScreen: true,
   className: 'bg-emerald-600 text-white rounded-2xl shadow-lg',
   style: { background: '...', color: '...' },
-  className: 'bg-emerald-600 text-white',
 
   // Timing & Behavior
   autoClose: 5000 | false,
